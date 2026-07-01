@@ -4,9 +4,6 @@ import { motion } from "framer-motion";
 import {
   ShieldCheck,
   Landmark,
-  FileCheck2,
-  MapPin,
-  ArrowRight,
   ScrollText,
   Layers,
   CheckCircle2,
@@ -17,6 +14,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ComplianceNotice from "@/components/ComplianceNotice";
+import AvatarHero from "@/components/AvatarHero";
 import YieldIllustrator from "@/components/YieldIllustrator";
 import InvestorIntake from "@/components/InvestorIntake";
 import { UNDERWRITING_GUIDELINES, PARTNER_DELIVERABLES } from "@/lib/trust-deed";
@@ -60,13 +58,6 @@ function Section({
   );
 }
 
-const PILLARS = [
-  { icon: Landmark, label: "First-position focus" },
-  { icon: ShieldCheck, label: "Conservative loan-to-value" },
-  { icon: MapPin, label: "California real estate" },
-  { icon: FileCheck2, label: "Licensed operator" },
-];
-
 const HOW_STEPS = [
   {
     icon: ScrollText,
@@ -100,98 +91,10 @@ const PROCESS = [
 
 export default function Home() {
   return (
-    <div id="top" className="min-h-screen">
+    <div className="min-h-screen">
       <Header />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute left-1/2 top-[-10%] h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-gold/10 blur-3xl" />
-        </div>
-        <div className="mx-auto grid max-w-engine items-center gap-10 px-5 pb-8 pt-14 sm:px-8 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
-          <motion.div initial="hidden" animate="show" variants={reveal}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white/60 px-3.5 py-1.5 text-[12.5px] font-medium text-navy-muted">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-              For capital partners · operated by West Coast Capital Mortgage
-            </span>
-            <h1 className="mt-5 text-balance text-[34px] font-semibold leading-[1.06] tracking-tight text-navy sm:text-[52px]">
-              Put capital behind{" "}
-              <span className="text-gold">first-position</span> California real estate.
-            </h1>
-            <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-navy-muted">
-              PrivateNoteCapital connects capital partners with conservatively underwritten,
-              real-estate-secured private mortgage notes. Real collateral, low loan-to-value, and a
-              disciplined process — not promises.
-            </p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#request"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-navy px-6 py-3 text-[15px] font-semibold text-white/95 transition-transform hover:-translate-y-0.5"
-              >
-                Become a capital partner <ArrowRight size={17} />
-              </a>
-              <a
-                href="#guidelines"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-hairline bg-white/70 px-6 py-3 text-[15px] font-medium text-navy transition-colors hover:border-navy/20"
-              >
-                See our guidelines
-              </a>
-            </div>
-            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-6">
-              {PILLARS.map((p) => (
-                <div key={p.label} className="flex items-center gap-2 text-[13.5px] font-medium text-navy-soft">
-                  <p.icon size={16} className="text-gold" />
-                  {p.label}
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Animated note-stack visual */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mx-auto hidden h-[360px] w-full max-w-md lg:block"
-          >
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 }}
-                className="absolute inset-x-0 rounded-3xl border border-hairline bg-white/80 p-6 shadow-lift backdrop-blur"
-                style={{ top: `${i * 46}px`, zIndex: 10 - i, transform: `scale(${1 - i * 0.05})` }}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wide text-navy-muted">
-                    <ScrollText size={15} className="text-gold" /> Deed of Trust
-                  </span>
-                  <span className="rounded-full bg-navy/5 px-2.5 py-1 text-[11px] font-semibold text-navy">
-                    1st position
-                  </span>
-                </div>
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  <div>
-                    <p className="text-[10.5px] uppercase tracking-wide text-navy-muted">Value</p>
-                    <p className="text-[15px] font-semibold text-navy">$1.2M</p>
-                  </div>
-                  <div>
-                    <p className="text-[10.5px] uppercase tracking-wide text-navy-muted">Note</p>
-                    <p className="text-[15px] font-semibold text-navy">$720K</p>
-                  </div>
-                  <div>
-                    <p className="text-[10.5px] uppercase tracking-wide text-navy-muted">LTV</p>
-                    <p className="text-[15px] font-semibold text-gold">60%</p>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center gap-1.5 text-[11.5px] text-navy-muted">
-                  <MapPin size={12} /> California · business-purpose · documented exit
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      <AvatarHero />
 
       <main className="mx-auto max-w-engine px-5 sm:px-8">
         {/* How it works */}
