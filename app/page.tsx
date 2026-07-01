@@ -15,6 +15,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ComplianceNotice from "@/components/ComplianceNotice";
 import AvatarHero from "@/components/AvatarHero";
+import FeatureStrip from "@/components/FeatureStrip";
 import YieldIllustrator from "@/components/YieldIllustrator";
 import InvestorIntake from "@/components/InvestorIntake";
 import { UNDERWRITING_GUIDELINES, PARTNER_DELIVERABLES } from "@/lib/trust-deed";
@@ -49,7 +50,7 @@ function Section({
       <span className="inline-block rounded-full border border-hairline bg-white/60 px-3.5 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-navy-muted">
         {eyebrow}
       </span>
-      <h2 className="mt-4 max-w-2xl text-balance text-[26px] font-semibold leading-[1.12] tracking-tight text-navy sm:text-[34px]">
+      <h2 className="mt-4 max-w-2xl font-serif text-balance text-[28px] font-medium leading-[1.12] tracking-tight text-navy sm:text-[38px]">
         {title}
       </h2>
       {intro && <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-navy-muted">{intro}</p>}
@@ -95,6 +96,7 @@ export default function Home() {
       <Header />
 
       <AvatarHero />
+      <FeatureStrip />
 
       <main className="mx-auto max-w-engine px-5 sm:px-8">
         {/* How it works */}

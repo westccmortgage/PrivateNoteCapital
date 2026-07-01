@@ -41,6 +41,7 @@ const config: Config = {
           "system-ui",
           "sans-serif",
         ],
+        serif: ["var(--font-playfair)", "Playfair Display", "Georgia", "serif"],
       },
     },
   },

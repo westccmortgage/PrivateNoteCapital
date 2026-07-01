@@ -1,6 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/site";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-playfair",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: `${SITE.name} — ${SITE.tagline}`,
@@ -24,7 +32,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={playfair.variable}>
       <body className="bg-engine-field min-h-screen antialiased">{children}</body>
     </html>
   );

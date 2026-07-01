@@ -34,7 +34,7 @@ export default function PageShell({ eyebrow, title, intro, back, children }: Pag
                 {eyebrow}
               </span>
             )}
-            <h1 className="mt-5 text-balance text-[30px] font-semibold leading-[1.1] tracking-tight text-navy sm:text-[40px]">
+            <h1 className="mt-5 font-serif text-balance text-[32px] font-medium leading-[1.1] tracking-tight text-navy sm:text-[44px]">
               {title}
             </h1>
             {intro && (
