@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --canvas: #f3f8ff;
-  --navy: #071a3d;
-  --gold: #c89a3c;
+  --canvas: #f8f6f1;
+  --navy: #0c1e3c;
+  --accent: #27568b;
+  --hairline: #e6e2d8;
 }
 
 html,
@@ -17,40 +18,41 @@ body {
 body {
   background-color: var(--canvas);
   color: var(--navy);
-  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* Soft single-tone field of light blue — no busy patterns, no cheap gradients. */
-.bg-engine-field {
-  background-color: #f3f8ff;
-  background-image: radial-gradient(
-    120% 80% at 50% -10%,
-    #ffffff 0%,
-    #f3f8ff 55%,
-    #eaf2ff 100%
-  );
+/* No horizontal overflow anywhere, ever (mobile requirement). */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: saturate(140%) blur(18px);
-  -webkit-backdrop-filter: saturate(140%) blur(18px);
-  border: 1px solid var(--hairline, #e5ecf5);
-}
-
-/* Custom selection in brand navy */
 ::selection {
-  background: rgba(7, 26, 61, 0.12);
+  background: rgba(39, 86, 139, 0.16);
 }
 
-/* Slim, unobtrusive scrollbar */
-textarea::-webkit-scrollbar {
-  width: 8px;
+/* Tabular figures for money/number columns so values line up. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
-textarea::-webkit-scrollbar-thumb {
-  background: #d7e2f1;
+
+/* Focus ring — visible, accent-colored, consistent. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Slim scrollbar for filter drawers / textareas. */
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #d8d3c6;
   border-radius: 999px;
 }

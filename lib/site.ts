@@ -1,16 +1,22 @@
-// Brand config for PrivateNoteCapital — operated by West Coast Capital Mortgage
-// (the legal entity lives in lib/company.ts). Keep brand strings here so the
-// same foundation can be re-skinned for the next sites.
+// Brand config for PrivateNoteCapital.com — the public Foreclosure & Auction
+// Intelligence platform. Operated by West Coast Capital Mortgage (legal entity in
+// lib/company.ts). The private-debt investor app now lives on the debt subdomain.
 
 export const SITE = {
-  name: "PrivateNoteCapital",
+  name: "Private Note Capital",
+  shortName: "PrivateNoteCapital",
   domain: "privatenotecapital.com",
-  url: "https://privatenotecapital.com",
-  tagline: "Conservatively underwritten California trust-deed investments.",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://privatenotecapital.com",
+  tagline: "Foreclosure & Auction Intelligence",
   description:
-    "PrivateNoteCapital connects capital partners with conservatively underwritten, real-estate-secured private mortgage notes (trust deeds) in California — operated by West Coast Capital Mortgage.",
+    "Search California & Florida foreclosure and auction opportunities. Track upcoming auctions, review property information, save opportunities, and request acquisition financing.",
+  // Single small footer link to the preserved private-debt investor platform.
+  debtPlatformUrl:
+    process.env.NEXT_PUBLIC_DEBT_PLATFORM_URL || "https://debt.privatenotecapital.com",
 } as const;
 
-// Scheduling link for "talk to a representative" (override in Netlify).
-export const BOOKING_URL =
-  process.env.NEXT_PUBLIC_BOOKING_URL || "https://calendly.com/westccmortgage/deal-review";
+// States the platform covers in Phase 1.
+export const SUPPORTED_STATES = [
+  { code: "CA", name: "California" },
+  { code: "FL", name: "Florida" },
+] as const;
