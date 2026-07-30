@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, Field, inputCls } from "@/components/ui";
+import { PasswordInput } from "@/components/PasswordInput";
 import { getBrowserSupabase } from "@/lib/supabase/client";
+import { buildResetRedirect, RESET_LINK_SENT } from "@/lib/auth-reset";
 
 type Mode = "signin" | "register" | "reset";
 
@@ -52,14 +54,19 @@ export function AuthForm({
         if (error) throw error;
         onSignedIn ? onSignedIn() : router.push(next);
       } else {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: typeof window !== "undefined" ? `${window.location.origin}/login` : undefined,
-        });
-        if (error) throw error;
-        setMsg("If that email exists, a reset link is on its way.");
+        // Password recovery: land on our server callback, which exchanges the
+        // PKCE code and forwards to /auth/reset-password. Use the production
+        // origin (never localhost) via buildResetRedirect().
+        await supabase.auth.resetPasswordForEmail(email, { redirectTo: buildResetRedirect() });
+        // Privacy-safe: never reveal whether the email exists. Show the same
+        // message regardless of the result.
+        setMsg(RESET_LINK_SENT);
       }
-    } catch (e2) {
-      setErr(e2 instanceof Error ? e2.message : "Something went wrong.");
+    } catch {
+      // Do not surface raw Supabase errors. For reset, still show the neutral
+      // message so we never leak account existence.
+      if (mode === "reset") setMsg(RESET_LINK_SENT);
+      else setErr("Something went wrong. Please check your details and try again.");
     } finally {
       setBusy(false);
     }
@@ -72,7 +79,13 @@ export function AuthForm({
       </Field>
       {mode !== "reset" ? (
         <Field label="Password" required hint={mode === "register" ? "(8+ characters)" : undefined}>
-          <input type="password" required minLength={8} autoComplete={mode === "register" ? "new-password" : "current-password"} className={inputCls} value={password} onChange={(e) => setPassword(e.target.value)} />
+          <PasswordInput
+            required
+            minLength={8}
+            autoComplete={mode === "register" ? "new-password" : "current-password"}
+            value={password}
+            onChange={setPassword}
+          />
         </Field>
       ) : null}
 

@@ -29,9 +29,26 @@ in the client bundle):
 ## Supabase
 
 One project. Apply `0001` → `0002` → `0003`; run the verification SQL in
-`docs/STAGING-SUPABASE-VERIFICATION.md`; enable Email auth; add
-`https://privatenotecapital.com` to the redirect allow-list; seed `admin_users` via the
+`docs/STAGING-SUPABASE-VERIFICATION.md`; enable Email auth; seed `admin_users` via the
 service role.
+
+### Auth URL configuration (required for password reset)
+
+In Supabase → **Authentication → URL Configuration**, set:
+
+- **Site URL:** `https://privatenotecapital.com`
+- **Redirect URLs** (allow-list — add all three):
+  - `https://privatenotecapital.com/**`
+  - `https://privatenotecapital.com/auth/callback`
+  - `https://privatenotecapital.com/auth/reset-password`
+
+The password-recovery email link must be allowed to return to
+`/auth/callback` (which exchanges the PKCE code) and forward to
+`/auth/reset-password`. Without these entries Supabase rejects the redirect and the
+reset link fails. Do not change the Supabase dashboard automatically — set these manually.
+
+The app builds the redirect from `NEXT_PUBLIC_SITE_URL` (or the live origin), never
+`localhost`, so recovery emails always point at production.
 
 ## Deploy
 

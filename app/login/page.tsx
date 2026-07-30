@@ -3,13 +3,22 @@ import Link from "next/link";
 import { Shell, Card } from "@/components/ui";
 import { AuthForm } from "@/components/forms/AuthForm";
 import { supabasePublicConfigured } from "@/lib/env";
+import { LOGIN_RESET_SUCCESS } from "@/lib/auth-reset";
 
 export const metadata: Metadata = {
   title: "Sign In",
   robots: { index: false },
 };
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const sp = await searchParams;
+  const resetSuccess = sp.password_reset === "success";
+  const initialMode = sp.reset === "1" ? "reset" : "signin";
+
   return (
     <Shell className="py-12">
       <div className="mx-auto max-w-md">
@@ -18,9 +27,16 @@ export default function LoginPage() {
           Accounts let you save properties, track auctions, and manage your weekly watchlist. You can
           search the whole platform without one.
         </p>
+
+        {resetSuccess ? (
+          <div className="mt-4 rounded-lg border border-[#CBE5DB] bg-[#E5F0EC] px-3 py-2 text-sm text-positive">
+            {LOGIN_RESET_SUCCESS}
+          </div>
+        ) : null}
+
         <div className="mt-6">
           {supabasePublicConfigured() ? (
-            <AuthForm initialMode="signin" next="/saved" />
+            <AuthForm initialMode={initialMode} next="/saved" />
           ) : (
             <Card className="p-6 text-center text-sm text-navy-muted">Accounts are not enabled yet.</Card>
           )}
