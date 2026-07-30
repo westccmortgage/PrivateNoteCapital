@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Shell, Card } from "@/components/ui";
 import { COMPANY, telHref } from "@/lib/company";
+import { SimpleInquiryForm } from "@/components/forms/SimpleInquiryForm";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -28,6 +29,17 @@ export default function ContactPage() {
           To move on a specific opportunity, use <a className="text-accent hover:underline" href="/financing">Request financing</a> so
           your inquiry is connected to the property.
         </p>
+
+        <div className="mt-8">
+          <h2 className="font-serif text-xl font-semibold text-navy">Send a message</h2>
+          <p className="mt-1 mb-4 text-sm text-navy-muted">We&apos;ll route it to the right person and reply shortly.</p>
+          <SimpleInquiryForm
+            endpoint="/api/contact"
+            messageLabel="How can we help?"
+            submitLabel="Send message"
+            successText="Thanks — your message was received. We'll get back to you shortly."
+          />
+        </div>
       </div>
     </Shell>
   );

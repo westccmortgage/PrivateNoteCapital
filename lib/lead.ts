@@ -25,6 +25,11 @@ export interface InterestRecord {
   investorExperience?: string;
   notes?: string;
   sourceDetail?: string;
+  sourceUrl?: string;
+  // Private-debt / investor metadata (investor inquiries only).
+  capitalRange?: string;
+  lienPreference?: string;
+  timeline?: string;
   attribution?: { utm_source?: string; utm_medium?: string; utm_campaign?: string; referrer?: string };
   consent?: boolean;
 }
@@ -54,6 +59,11 @@ export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> 
     investorExperience: rec.investorExperience,
     notes: rec.notes,
     sourceDetail: rec.sourceDetail,
+    sourceUrl: rec.sourceUrl,
+    capitalRange: rec.capitalRange,
+    lienPreference: rec.lienPreference,
+    timeline: rec.timeline,
+    submittedAt: nowIso,
     utm: {
       source: rec.attribution?.utm_source,
       medium: rec.attribution?.utm_medium,
@@ -88,7 +98,15 @@ export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> 
         state: rec.state ?? null,
         county: rec.county ?? null,
         investor_experience: rec.investorExperience ?? null,
-        notes: rec.notes ?? null,
+        notes:
+          [
+            rec.notes,
+            rec.capitalRange ? `Capital: ${rec.capitalRange}` : null,
+            rec.lienPreference ? `Lien: ${rec.lienPreference}` : null,
+            rec.timeline ? `Timeline: ${rec.timeline}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ") || null,
         utm_source: rec.attribution?.utm_source ?? null,
         utm_medium: rec.attribution?.utm_medium ?? null,
         utm_campaign: rec.attribution?.utm_campaign ?? null,

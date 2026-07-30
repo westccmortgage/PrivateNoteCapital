@@ -1,6 +1,6 @@
-// Brand config for PrivateNoteCapital.com — the public Foreclosure & Auction
-// Intelligence platform. Operated by West Coast Capital Mortgage (legal entity in
-// lib/company.ts). The private-debt investor app now lives on the debt subdomain.
+// Brand config for PrivateNoteCapital.com — ONE combined platform: foreclosure &
+// auction intelligence PLUS a private-debt capital-partner section, on a single
+// domain. Operated by West Coast Capital Mortgage (legal entity in lib/company.ts).
 
 export const SITE = {
   name: "Private Note Capital",
@@ -9,10 +9,7 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://privatenotecapital.com",
   tagline: "Foreclosure & Auction Intelligence",
   description:
-    "Search California & Florida foreclosure and auction opportunities. Track upcoming auctions, review property information, save opportunities, and request acquisition financing.",
-  // Single small footer link to the preserved private-debt investor platform.
-  debtPlatformUrl:
-    process.env.NEXT_PUBLIC_DEBT_PLATFORM_URL || "https://debt.privatenotecapital.com",
+    "Search California & Florida foreclosure and auction opportunities, and explore a private-debt capital-partner program — one platform from Private Note Capital.",
 } as const;
 
 // States the platform covers in Phase 1.

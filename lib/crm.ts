@@ -32,6 +32,12 @@ export interface CrmLead {
   investorExperience?: string;
   notes?: string;
   sourceDetail?: string; // e.g. "financing form", "property page"
+  // Private-debt / investor metadata (present only for investor inquiries).
+  capitalRange?: string;
+  lienPreference?: string;
+  timeline?: string;
+  sourceUrl?: string; // the page the inquiry came from
+  submittedAt?: string; // ISO; set by the caller (recordInterest)
   utm?: { source?: string; medium?: string; campaign?: string };
   referrer?: string;
   consentAt?: string;
@@ -80,10 +86,20 @@ const ACTION_LABEL: Record<string, string> = {
   deal_review: "Deal review request",
   financing_request: "Financing request",
   watchlist: "Weekly watchlist subscription",
+  investor_inquiry: "Private-debt investor inquiry",
+  book_review: "Consultation / deal-review request",
+  contact: "General contact",
 };
 
-/** Suggested opportunity title: "[County] Auction Acquisition — [Property Address]". */
+/** Suggested opportunity title. Foreclosure: "[County] Auction Acquisition —
+ *  [Address]". Private-debt/contact: a capital-partner/contact title. */
 export function opportunityTitle(lead: CrmLead): string {
+  if (lead.actionType === "investor_inquiry") {
+    return `Capital Partner — ${fullName(lead) || lead.email || "Investor inquiry"}`;
+  }
+  if (lead.actionType === "book_review" || lead.actionType === "contact") {
+    return `${ACTION_LABEL[lead.actionType]} — ${fullName(lead) || lead.email || "Inquiry"}`;
+  }
   const county = lead.county ? `${lead.county} ` : "";
   const kind =
     lead.financingType === "auction_acquisition" || lead.actionType === "track_auction"
@@ -97,6 +113,10 @@ export function opportunityTitle(lead: CrmLead): string {
 
 /** Suggested follow-up task. */
 export function followUpTask(lead: CrmLead): string {
+  if (lead.actionType === "investor_inquiry")
+    return `Contact capital partner ${fullName(lead) || lead.email || ""}`.trim();
+  if (lead.actionType === "book_review" || lead.actionType === "contact")
+    return `Follow up with ${fullName(lead) || lead.email || "the contact"}`;
   const addr = lead.propertyAddress || "the property";
   return lead.auctionDate
     ? `Contact investor regarding ${addr} before ${lead.auctionDate}`
@@ -122,6 +142,10 @@ export function buildMessage(lead: CrmLead): string {
     lead.financingType ? `Financing: ${labelFor(FINANCING_TYPES, lead.financingType)}` : null,
     lead.requestedAmount != null ? `Requested amount: ${formatMoney(lead.requestedAmount)}` : null,
     lead.investorExperience ? `Investor experience: ${lead.investorExperience}` : null,
+    // Private-debt / investor metadata (only present for investor inquiries).
+    lead.capitalRange ? `Capital to deploy: ${lead.capitalRange}` : null,
+    lead.lienPreference ? `Lien preference: ${lead.lienPreference}` : null,
+    lead.timeline ? `Timeline: ${lead.timeline}` : null,
     ``,
     lead.notes ? `Notes: ${lead.notes}` : null,
     ``,
@@ -149,6 +173,9 @@ export function buildGrcrmPayload(lead: CrmLead): Record<string, unknown> {
     external_event_id: eventIdFor(lead), // sender traceability (receiver ignores)
     // Structured extras (a GRCRM handler MAY map these; safe to ignore):
     source: "Private Note Capital",
+    request_type: lead.actionType,
+    submitted_at: lead.submittedAt ?? "",
+    source_url: lead.sourceUrl ?? "",
     sourceDetail: lead.sourceDetail ?? "",
     contact: {
       firstName: lead.firstName ?? "",
@@ -167,6 +194,11 @@ export function buildGrcrmPayload(lead: CrmLead): Record<string, unknown> {
       auctionDate: lead.auctionDate ?? "",
       investorExperience: lead.investorExperience ?? "",
       stageLabel: lead.notes ? "" : labelFor(FORECLOSURE_STAGES, ""),
+    },
+    privateDebt: {
+      capitalRange: lead.capitalRange ?? "",
+      lienPreference: lead.lienPreference ?? "",
+      timeline: lead.timeline ?? "",
     },
     opportunity: { title: opportunityTitle(lead) },
     task: { title: followUpTask(lead) },

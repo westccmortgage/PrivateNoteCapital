@@ -5,11 +5,21 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { SITE } from "@/lib/site";
 
+// One consolidated navigation. Foreclosure is the primary product; Private Debt
+// is a section of the same platform. Watchlist/Saved live in the mobile drawer
+// and are reachable from the homepage + footer to keep the header uncluttered.
 const NAV = [
-  { href: "/search", label: "Search Properties" },
-  { href: "/calendar", label: "Auction Calendar" },
-  { href: "/watchlist", label: "Weekly Watchlist" },
+  { href: "/search", label: "Search" },
+  { href: "/calendar", label: "Calendar" },
   { href: "/financing", label: "Financing" },
+  { href: "/private-debt", label: "Private Debt" },
+  { href: "/company", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
+// Extra links shown only in the mobile drawer.
+const MOBILE_EXTRA = [
+  { href: "/watchlist", label: "Weekly Watchlist" },
   { href: "/saved", label: "Saved Properties" },
 ];
 
@@ -53,7 +63,7 @@ export function SiteHeader() {
       {open ? (
         <nav className="border-t border-hairline bg-canvas lg:hidden" aria-label="Mobile">
           <div className="mx-auto flex max-w-shell flex-col px-5 py-2">
-            {NAV.map((n) => (
+            {[...NAV, ...MOBILE_EXTRA].map((n) => (
               <Link
                 key={n.href}
                 href={n.href}

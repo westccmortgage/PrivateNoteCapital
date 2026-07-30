@@ -2,10 +2,14 @@ import Link from "next/link";
 import { SITE } from "@/lib/site";
 import { COMPANY } from "@/lib/company";
 
-// Footer nav per spec. The Private Debt Platform link is intentionally small and
-// lives ONLY here — it is never in the primary navigation.
+// One combined platform: Private Debt is a normal internal section (also in the
+// primary nav), not a separate site.
 const FOOTER_LINKS = [
+  { href: "/search", label: "Search" },
+  { href: "/private-debt", label: "Private Debt" },
+  { href: "/company", label: "About" },
   { href: "/about-data", label: "About Data" },
+  { href: "/watchlist", label: "Weekly Watchlist" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/contact", label: "Contact" },
@@ -33,18 +37,12 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <div className="mt-8 flex flex-col gap-2 border-t border-hairline pt-6 text-xs text-navy-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 border-t border-hairline pt-6 text-xs text-navy-muted">
           <p>
             © {new Date().getFullYear()} {SITE.name}. Property information may change; verify
-            independently. Not the auction operator. Not a commitment to lend.
+            independently. Not the auction operator. Not a commitment to lend. Private-debt content
+            is not an offer of securities.
           </p>
-          {/* Single, small link to the preserved private-debt investor platform. */}
-          <a
-            href={SITE.debtPlatformUrl}
-            className="text-navy-muted underline decoration-hairlineStrong underline-offset-2 hover:text-navy"
-          >
-            Private Debt Platform
-          </a>
         </div>
       </div>
     </footer>

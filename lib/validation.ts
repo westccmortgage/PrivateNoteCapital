@@ -94,6 +94,44 @@ export function validateFinancing(body: Record<string, unknown>): ValidationResu
   return { ok: errors.length === 0, errors, value };
 }
 
+export interface InvestorInput extends ContactCore {
+  capitalRange: string;
+  lienPreference: string;
+  timeline: string;
+  message: string;
+  consent: boolean;
+}
+
+export function validateInvestor(body: Record<string, unknown>): ValidationResult<InvestorInput> {
+  const contact = validateContact(body);
+  const value: InvestorInput = {
+    ...contact.value,
+    capitalRange: cleanStr(body.capitalRange, 60),
+    lienPreference: cleanStr(body.lienPreference, 60),
+    timeline: cleanStr(body.timeline, 60),
+    message: cleanStr(body.message, 4000),
+    consent: body.consent === true || body.consent === "true",
+  };
+  const errors = [...contact.errors];
+  // Consent is required before a capital-partner inquiry is forwarded.
+  if (!value.consent) errors.push("Please agree to be contacted about capital-partner opportunities.");
+  return { ok: errors.length === 0, errors, value };
+}
+
+export interface SimpleInput extends ContactCore {
+  message: string;
+}
+
+/** Book-review / consultation / general contact — name + email required. */
+export function validateSimple(body: Record<string, unknown>): ValidationResult<SimpleInput> {
+  const contact = validateContact(body);
+  return {
+    ok: contact.errors.length === 0,
+    errors: contact.errors,
+    value: { ...contact.value, message: cleanStr(body.message, 4000) },
+  };
+}
+
 export interface WatchlistInput extends ContactCore {
   state: string;
   counties: string[];
