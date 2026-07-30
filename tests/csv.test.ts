@@ -87,16 +87,16 @@ const MAP = {
   source_url: "url",
 } as const;
 
-test("validateImport: rejects missing external_id and bad state", () => {
+test("validateImport: derives identity from address when record id is missing; rejects bad state", () => {
   const records = [
-    { id: "", st: "CA", addr: "1 A St", cty: "", auction: "", bid: "", val: "", debt: "", url: "" },
-    { id: "X1", st: "TX", addr: "2 B St", cty: "", auction: "", bid: "", val: "", debt: "", url: "" },
+    { id: "", st: "CA", addr: "1 A St", cty: "LA", auction: "", bid: "", val: "", debt: "", url: "" }, // valid via address fallback
+    { id: "X1", st: "TX", addr: "2 B St", cty: "", auction: "", bid: "", val: "", debt: "", url: "" }, // rejected: state
   ];
   const { valid, rejected } = validateImport(records, MAP, "manual_csv");
-  assert.equal(valid.length, 0);
-  assert.equal(rejected.length, 2);
-  assert.ok(rejected[0].reasons.some((r) => r.includes("external_id")));
-  assert.ok(rejected[1].reasons.some((r) => r.includes("CA or FL")));
+  assert.equal(valid.length, 1);
+  assert.equal(rejected.length, 1);
+  assert.ok(rejected[0].reasons.some((r) => r.includes("CA or FL")));
+  assert.ok(valid[0].external_id.startsWith("addr:")); // deterministic derived identity
 });
 
 test("validateImport: requires address or county", () => {
@@ -124,7 +124,7 @@ test("validateImport: dedupes by (source, external_id), latest wins", () => {
   ];
   const { valid, duplicateKeysInFile } = validateImport(records, MAP, "manual_csv");
   assert.equal(valid.length, 2);
-  assert.ok(duplicateKeysInFile.includes("manual_csv|DUP"));
+  assert.ok(duplicateKeysInFile.includes("DUP")); // dedup key = derived external_id
   const dup = valid.find((r) => r.external_id === "DUP");
   assert.equal(dup?.address, "new"); // latest wins
   assert.equal(dup?.opening_bid, 200);

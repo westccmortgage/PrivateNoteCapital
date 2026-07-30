@@ -3,6 +3,15 @@
 // (see tests/csv.test.ts). The admin route calls these, then upserts by
 // (source_name, external_id).
 
+import {
+  normalizeState,
+  normalizeCounty,
+  normalizeZip,
+  normalizeLifecycle,
+  dedupExternalId,
+  evaluateEligibility,
+} from "@/lib/normalize";
+
 // ------------------------------ parsing ------------------------------------
 
 /** RFC-4180-ish CSV parser: handles quoted fields, embedded commas/newlines,
@@ -182,11 +191,16 @@ export function normalizePropertyType(v: string | undefined | null): string | nu
 
 // ------------------------------ mapping ------------------------------------
 
-// Canonical writable fields for an import row.
+// Writable + mapped fields for an import row. Core fields map to columns present
+// in migration 0001; rich fields map to optional columns from 0004 (the upsert
+// writes only columns that actually exist). Transient/computed fields (marked)
+// are never written to the DB as-is.
 export interface ImportRow {
+  // --- core (0001) ---
   external_id: string;
   source_name: string;
   source_url: string | null;
+  source_last_updated_at: string | null;
   state: string;
   county: string | null;
   city: string | null;
@@ -208,6 +222,30 @@ export interface ImportRow {
   occupancy_status: string | null;
   previous_sale_date: string | null;
   previous_sale_price: number | null;
+  // --- rich (0004, optional) ---
+  latitude: number | null;
+  longitude: number | null;
+  year_built: number | null;
+  lot_size: number | null;
+  trustee_name: string | null;
+  case_number: string | null;
+  notice_type: string | null;
+  notice_recording_date: string | null;
+  default_date: string | null;
+  auction_time: string | null;
+  auction_location: string | null;
+  unpaid_balance: number | null;
+  judgment_amount: number | null;
+  assessed_value: number | null;
+  estimated_lien_position: string | null;
+  source_license_status: string | null;
+  // --- transient source inputs (mapped, used to compute, not stored as-is) ---
+  status: string | null; // lifecycle source value
+  market_value: number | null; // alias into estimated_value
+  // --- computed (not mapped) ---
+  record_status: string; // published | draft | archived
+  eligible: boolean;
+  eligibility_reasons: string[];
   source_url_present: boolean;
 }
 
@@ -223,7 +261,8 @@ export interface RejectedRow {
 export interface ValidationSummary {
   valid: ImportRow[];
   rejected: RejectedRow[];
-  duplicateKeysInFile: string[]; // source_name|external_id seen more than once
+  duplicateKeysInFile: string[]; // dedup key seen more than once
+  publishable: number; // rows whose computed record_status === 'published'
 }
 
 function pick(rec: Record<string, string>, map: ColumnMap, field: keyof ImportRow): string {
@@ -232,57 +271,88 @@ function pick(rec: Record<string, string>, map: ColumnMap, field: keyof ImportRo
   return (rec[col] ?? "").trim();
 }
 
-/** Build + validate + normalize records into ImportRows. Dedups within the file. */
+export interface ValidateOptions {
+  publicDisplayAllowed?: boolean; // from the source profile / license
+  defaults?: { state?: string; county?: string }; // implicit values for county-specific exports
+}
+
+/**
+ * Build + validate + normalize records into ImportRows, computing a dedup
+ * identity (source record id → APN → address) and a per-row publication status.
+ * Dedups within the file. Never fabricates values (missing → null).
+ */
 export function validateImport(
   records: Record<string, string>[],
   map: ColumnMap,
   sourceName: string,
+  opts: ValidateOptions = {},
 ): ValidationSummary {
+  const publicDisplayAllowed = opts.publicDisplayAllowed ?? true;
   const byKey = new Map<string, ImportRow>(); // preserves insertion order; later row wins
   const rejected: RejectedRow[] = [];
   const dupKeys = new Set<string>();
 
   records.forEach((rec, index) => {
     const reasons: string[] = [];
-    const external_id = pick(rec, map, "external_id");
-    const state = (pick(rec, map, "state") || "").toUpperCase();
-
-    if (!external_id) reasons.push("Missing external_id (required, prevents duplicates).");
-    if (state !== "CA" && state !== "FL") reasons.push("state must be CA or FL.");
-
-    const source_url = pick(rec, map, "source_url") || null;
+    const explicitId = pick(rec, map, "external_id");
+    // Apply source-profile defaults when the row lacks its own state/county
+    // (e.g. a Palm Beach County export is implicitly Palm Beach, FL).
+    const state = normalizeState(pick(rec, map, "state")) ?? (opts.defaults?.state ?? null);
     const address = pick(rec, map, "address") || null;
-    const county = pick(rec, map, "county") || null;
+    const county = normalizeCounty(pick(rec, map, "county")) ?? (opts.defaults?.county ?? null);
+    const apn = pick(rec, map, "apn") || null;
+
+    // Dedup identity: explicit id, else APN, else normalized address.
+    const external_id = dedupExternalId({ external_id: explicitId, state, county, apn, address, zip: pick(rec, map, "zip") });
+    if (!external_id) reasons.push("No usable identity (need a record id, APN, or address).");
+    if (state !== "CA" && state !== "FL") reasons.push("State must be CA or FL.");
     if (!address && !county) reasons.push("At least one of address or county is required.");
 
-    if (reasons.length) {
-      rejected.push({ index, reasons, raw: rec });
+    if (reasons.length || !external_id) {
+      rejected.push({ index, reasons: reasons.length ? reasons : ["Invalid row."], raw: rec });
       return;
     }
 
-    const estimated_value = coerceNumber(pick(rec, map, "estimated_value"));
-    const estimated_debt = coerceNumber(pick(rec, map, "estimated_debt"));
+    // Financial fallbacks (never fabricate; only fall back to a mapped alias).
+    const market_value = coerceNumber(pick(rec, map, "market_value"));
+    const assessed_value = coerceNumber(pick(rec, map, "assessed_value"));
+    let estimated_value = coerceNumber(pick(rec, map, "estimated_value"));
+    if (estimated_value == null) estimated_value = market_value ?? assessed_value;
+
+    const unpaid_balance = coerceNumber(pick(rec, map, "unpaid_balance"));
+    const judgment_amount = coerceNumber(pick(rec, map, "judgment_amount"));
+    let estimated_debt = coerceNumber(pick(rec, map, "estimated_debt"));
+    if (estimated_debt == null) estimated_debt = unpaid_balance ?? judgment_amount;
+
     let estimated_equity = coerceNumber(pick(rec, map, "estimated_equity"));
     if (estimated_equity == null && estimated_value != null && estimated_debt != null) {
       estimated_equity = estimated_value - estimated_debt; // derive only when both exist
     }
 
+    const foreclosure_stage = normalizeStage(pick(rec, map, "foreclosure_stage"));
+    const lifecycle = normalizeLifecycle(pick(rec, map, "status") || pick(rec, map, "foreclosure_stage"));
+    const elig = evaluateEligibility({
+      address, apn, state, county, foreclosure_stage, lifecycle, publicDisplayAllowed,
+    });
+
+    const source_url = pick(rec, map, "source_url") || null;
     const row: ImportRow = {
       external_id,
       source_name: sourceName,
       source_url,
-      state,
+      source_last_updated_at: coerceDate(pick(rec, map, "source_last_updated_at")),
+      state: state as string,
       county,
       city: pick(rec, map, "city") || null,
-      zip: pick(rec, map, "zip") || null,
+      zip: normalizeZip(pick(rec, map, "zip")),
       address,
-      apn: pick(rec, map, "apn") || null,
-      property_type: normalizePropertyType(pick(rec, map, "property_type")),
+      apn,
+      property_type: pick(rec, map, "property_type") ? normalizePropertyType(pick(rec, map, "property_type")) : null,
       beds: coerceNumber(pick(rec, map, "beds")),
       baths: coerceNumber(pick(rec, map, "baths")),
       units: coerceNumber(pick(rec, map, "units")),
       square_feet: coerceNumber(pick(rec, map, "square_feet")),
-      foreclosure_stage: normalizeStage(pick(rec, map, "foreclosure_stage")),
+      foreclosure_stage,
       original_auction_date: coerceDate(pick(rec, map, "original_auction_date")),
       current_auction_date: coerceDate(pick(rec, map, "current_auction_date")),
       opening_bid: coerceNumber(pick(rec, map, "opening_bid")),
@@ -292,13 +362,40 @@ export function validateImport(
       occupancy_status: pick(rec, map, "occupancy_status") || null,
       previous_sale_date: coerceDate(pick(rec, map, "previous_sale_date")),
       previous_sale_price: coerceNumber(pick(rec, map, "previous_sale_price")),
+      // rich (0004)
+      latitude: coerceNumber(pick(rec, map, "latitude")),
+      longitude: coerceNumber(pick(rec, map, "longitude")),
+      year_built: coerceNumber(pick(rec, map, "year_built")),
+      lot_size: coerceNumber(pick(rec, map, "lot_size")),
+      trustee_name: pick(rec, map, "trustee_name") || null,
+      case_number: pick(rec, map, "case_number") || null,
+      notice_type: pick(rec, map, "notice_type") || null,
+      notice_recording_date: coerceDate(pick(rec, map, "notice_recording_date")),
+      default_date: coerceDate(pick(rec, map, "default_date")),
+      auction_time: pick(rec, map, "auction_time") || null,
+      auction_location: pick(rec, map, "auction_location") || null,
+      unpaid_balance,
+      judgment_amount,
+      assessed_value,
+      estimated_lien_position: pick(rec, map, "estimated_lien_position") || null,
+      source_license_status: pick(rec, map, "source_license_status") || (publicDisplayAllowed ? "public" : "restricted"),
+      status: pick(rec, map, "status") || null,
+      market_value,
+      record_status: elig.status,
+      eligible: elig.eligible,
+      eligibility_reasons: elig.reasons,
       source_url_present: Boolean(source_url),
     };
 
-    const key = `${sourceName}|${external_id}`;
-    if (byKey.has(key)) dupKeys.add(key); // duplicate within the file; latest row wins
-    byKey.set(key, row);
+    if (byKey.has(external_id)) dupKeys.add(external_id); // duplicate within the file; latest wins
+    byKey.set(external_id, row);
   });
 
-  return { valid: [...byKey.values()], rejected, duplicateKeysInFile: [...dupKeys] };
+  const valid = [...byKey.values()];
+  return {
+    valid,
+    rejected,
+    duplicateKeysInFile: [...dupKeys],
+    publishable: valid.filter((r) => r.record_status === "published").length,
+  };
 }

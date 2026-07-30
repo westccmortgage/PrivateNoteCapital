@@ -3,6 +3,33 @@
 How property data gets into the platform. **Approved sources only** — no scraping, no
 fabricated listings in production.
 
+## Load real inventory NOW (owner quick-start)
+
+1. Sign in as an admin and open **`/admin/import`**.
+2. Pick a **source profile**: Generic foreclosure CSV, California foreclosure/trustee-sale,
+   or Palm Beach / Broward / Miami-Dade County. County profiles auto-fill state + county.
+3. Upload the export CSV → **Validate & preview**. The preview shows normalized records,
+   which will publish vs stay draft, and *why* a record isn't publishable.
+4. Adjust the column mapping if the headers differ (advanced panel), then **Confirm import**.
+5. Eligible records publish automatically and appear at **`/search`** immediately; the rest
+   stay draft. Use **Publish eligible drafts** to bulk-publish later.
+
+The core import works on migrations `0001–0003` (already applied). Migration
+`0004_property_rich_fields.sql` is **optional** — apply it to also capture trustee, case #,
+lat/long, unpaid balance, etc. The importer writes only the columns that exist, so it never
+breaks whether or not `0004` is applied.
+
+## Publication eligibility & statuses
+
+A row publishes (`record_status='published'`) only when it has a usable address or parcel
+identity, a valid CA/FL state, a county, a recognized foreclosure stage, an active lifecycle,
+and a source license that permits public display. Otherwise it stays **draft** with reasons.
+Cancelled/sold/withdrawn records become **archived** (removed from public search, never
+deleted). Public search returns only `published` rows, so draft and archived are invisible.
+
+Dedup identity (repeat imports update in place, preserving the internal id + saved/inquiry
+links): **source record id → state|county|normalized-APN → normalized address**.
+
 ## Principles (data-source rules)
 
 - Do **not** scrape ForeclosureRadar, PropertyRadar, county sites, or auction platforms

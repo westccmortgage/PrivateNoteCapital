@@ -10,24 +10,55 @@ interface RejectedRow {
   reasons: string[];
   raw: Record<string, string>;
 }
+interface PreviewRow {
+  external_id?: string;
+  address?: string | null;
+  city?: string | null;
+  county?: string | null;
+  state?: string;
+  current_auction_date?: string | null;
+  opening_bid?: number | null;
+  foreclosure_stage?: string | null;
+  record_status?: string;
+  eligible?: boolean;
+  eligibility_reasons?: string[];
+}
 interface ValidateResult {
   headers: string[];
   received: number;
   valid: number;
+  publishable: number;
+  draft: number;
+  archived: number;
   rejected: RejectedRow[];
   duplicateKeysInFile: string[];
   publicDisplayAllowed: boolean;
-  preview: Record<string, unknown>[];
+  preview: PreviewRow[];
+}
+interface CommitResult {
+  received: number;
+  accepted: number;
+  created: number;
+  updated: number;
+  duplicates: number;
+  rejected: number;
+  published: number;
+  draft: number;
+  archived: number;
+  withdrawn: number;
+  richFieldsWritten: boolean;
 }
 
 export function ImportWizard() {
   const [source, setSource] = useState(ADAPTERS[0].id);
   const [file, setFile] = useState<File | null>(null);
   const [columnMap, setColumnMap] = useState("");
+  const [withdrawStale, setWithdrawStale] = useState(false);
   const [validation, setValidation] = useState<ValidateResult | null>(null);
+  const [commit, setCommit] = useState<CommitResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [committed, setCommitted] = useState<string | null>(null);
+  const [publishMsg, setPublishMsg] = useState<string | null>(null);
 
   const adapter = ADAPTERS.find((a) => a.id === source)!;
 
@@ -37,26 +68,40 @@ export function ImportWizard() {
       return;
     }
     setErr(null);
+    setPublishMsg(null);
     setBusy(true);
-    if (action === "validate") setValidation(null);
+    if (action === "validate") { setValidation(null); setCommit(null); }
     const fd = new FormData();
     fd.set("action", action);
     fd.set("source", source);
     fd.set("file", file);
     if (columnMap.trim()) fd.set("columnMap", columnMap.trim());
+    if (action === "commit" && withdrawStale) fd.set("withdrawStale", "true");
     try {
       const res = await fetch("/api/admin/import", { method: "POST", body: fd });
       const json = await res.json();
-      if (!res.ok) {
-        setErr(json.error || "Request failed.");
-      } else if (action === "validate") {
-        setValidation(json as ValidateResult);
-      } else {
-        setCommitted(`Imported: ${json.created} created, ${json.updated} updated, ${json.rejected} rejected. Records saved as "${json.status}".`);
-        setValidation(null);
-      }
+      if (!res.ok) setErr(json.error || "Request failed.");
+      else if (action === "validate") setValidation(json as ValidateResult);
+      else { setCommit(json as CommitResult); setValidation(null); }
     } catch {
       setErr("Network error.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function publishEligible() {
+    setBusy(true);
+    setPublishMsg(null);
+    const fd = new FormData();
+    fd.set("action", "publish_eligible");
+    fd.set("source", source);
+    try {
+      const res = await fetch("/api/admin/import", { method: "POST", body: fd });
+      const json = await res.json();
+      setPublishMsg(res.ok ? `Published ${json.published} eligible draft record(s).` : json.error || "Publish failed.");
+    } catch {
+      setPublishMsg("Network error.");
     } finally {
       setBusy(false);
     }
@@ -65,8 +110,6 @@ export function ImportWizard() {
   function downloadRejected() {
     if (!validation?.rejected.length) return;
     const headers = validation.headers;
-    // Neutralize spreadsheet formula injection on export: a cell that begins
-    // with = + - @ is prefixed with ' so Excel/Sheets treats it as text.
     const cell = (v: string) => JSON.stringify(neutralizeFormula(v) ?? "");
     const lines = [
       ["_reasons", ...headers].join(","),
@@ -87,13 +130,13 @@ export function ImportWizard() {
     <div className="flex flex-col gap-5">
       <Card className="p-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Source">
-            <select className={inputCls} value={source} onChange={(e) => { setSource(e.target.value); setValidation(null); }}>
+          <Field label="Source profile">
+            <select className={inputCls} value={source} onChange={(e) => { setSource(e.target.value); setValidation(null); setCommit(null); }}>
               {ADAPTERS.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
             </select>
           </Field>
           <Field label="CSV file">
-            <input type="file" accept=".csv,text/csv" className={inputCls} onChange={(e) => { setFile(e.target.files?.[0] ?? null); setValidation(null); }} />
+            <input type="file" accept=".csv,text/csv" className={inputCls} onChange={(e) => { setFile(e.target.files?.[0] ?? null); setValidation(null); setCommit(null); }} />
           </Field>
         </div>
 
@@ -109,28 +152,63 @@ export function ImportWizard() {
         <details className="mt-3">
           <summary className="cursor-pointer text-sm font-semibold text-accent">Column mapping (advanced)</summary>
           <p className="mt-2 text-xs text-navy-muted">
-            Default mapping for this source is applied automatically. To override, paste a JSON object of
-            {" "}<code>{`{ "canonical_field": "CSV Header" }`}</code>. Example:
+            The source profile is applied automatically. To override, paste a JSON object of
+            {" "}<code>{`{ "canonical_field": "CSV Header" }`}</code>:
           </p>
-          <pre className="mt-1 overflow-x-auto rounded bg-canvas p-2 text-xs">{JSON.stringify(adapter.defaultColumnMap, null, 2)}</pre>
+          <pre className="mt-1 max-h-48 overflow-auto rounded bg-canvas p-2 text-xs">{JSON.stringify(adapter.defaultColumnMap, null, 2)}</pre>
           <textarea className={inputCls} rows={4} value={columnMap} onChange={(e) => setColumnMap(e.target.value)} placeholder='{"external_id":"CaseNumber"}' />
         </details>
+
+        <label className="mt-3 flex items-center gap-2 text-sm text-navy">
+          <input type="checkbox" checked={withdrawStale} onChange={(e) => setWithdrawStale(e.target.checked)} />
+          Withdraw published records from this source that are <strong>not</strong> in this file (archive, never delete)
+        </label>
 
         <div className="mt-4 flex flex-wrap gap-2">
           <Button onClick={() => call("validate")} disabled={busy}>{busy ? "Working…" : "Validate & preview"}</Button>
           <Button variant="ghost" onClick={() => call("commit")} disabled={busy || !validation}>Confirm import</Button>
+          <Button variant="ghost" onClick={publishEligible} disabled={busy}>Publish eligible drafts</Button>
         </div>
         {err ? <p className="mt-3 text-sm text-warn">{err}</p> : null}
-        {committed ? <p className="mt-3 text-sm text-positive">{committed}</p> : null}
+        {publishMsg ? <p className="mt-3 text-sm text-positive">{publishMsg}</p> : null}
       </Card>
 
+      {/* Commit summary */}
+      {commit ? (
+        <Card className="p-5">
+          <p className="font-serif text-lg font-semibold text-navy">Import complete</p>
+          <div className="mt-3 flex flex-wrap gap-3 text-sm">
+            <Stat label="Received" value={commit.received} />
+            <Stat label="Accepted" value={commit.accepted} tone="positive" />
+            <Stat label="Created" value={commit.created} />
+            <Stat label="Updated" value={commit.updated} />
+            <Stat label="Duplicates merged" value={commit.duplicates} />
+            <Stat label="Published" value={commit.published} tone="positive" />
+            <Stat label="Draft" value={commit.draft} />
+            <Stat label="Archived" value={commit.archived} />
+            <Stat label="Withdrawn" value={commit.withdrawn} />
+            <Stat label="Rejected" value={commit.rejected} tone={commit.rejected ? "warn" : undefined} />
+          </div>
+          {!commit.richFieldsWritten ? (
+            <p className="mt-3 text-xs text-navy-muted">
+              Rich fields (trustee, case #, lat/long, …) were skipped because migration
+              <code> 0004_property_rich_fields.sql</code> isn&apos;t applied yet. Core fields imported fine.
+            </p>
+          ) : null}
+        </Card>
+      ) : null}
+
+      {/* Validation preview */}
       {validation ? (
         <Card className="p-5">
           <div className="flex flex-wrap gap-3 text-sm">
             <Stat label="Received" value={validation.received} />
             <Stat label="Valid" value={validation.valid} tone="positive" />
+            <Stat label="Publishable" value={validation.publishable} tone="positive" />
+            <Stat label="Draft" value={validation.draft} />
+            <Stat label="Archived" value={validation.archived} />
             <Stat label="Rejected" value={validation.rejected.length} tone={validation.rejected.length ? "warn" : undefined} />
-            <Stat label="Duplicate keys in file" value={validation.duplicateKeysInFile.length} />
+            <Stat label="Dup keys" value={validation.duplicateKeysInFile.length} />
           </div>
 
           {validation.rejected.length ? (
@@ -158,21 +236,27 @@ export function ImportWizard() {
                 <table className="min-w-full text-xs">
                   <thead>
                     <tr className="text-left text-navy-muted">
-                      <th className="py-1 pr-3">external_id</th>
                       <th className="py-1 pr-3">address</th>
+                      <th className="py-1 pr-3">county</th>
                       <th className="py-1 pr-3">state</th>
+                      <th className="py-1 pr-3">stage</th>
                       <th className="py-1 pr-3">auction</th>
-                      <th className="py-1 pr-3">opening_bid</th>
+                      <th className="py-1 pr-3">status</th>
+                      <th className="py-1 pr-3">why not published</th>
                     </tr>
                   </thead>
                   <tbody>
                     {validation.preview.map((r, i) => (
-                      <tr key={i} className="border-t border-hairline">
-                        <td className="py-1 pr-3">{String(r.external_id ?? "")}</td>
-                        <td className="py-1 pr-3">{String(r.address ?? "")}</td>
-                        <td className="py-1 pr-3">{String(r.state ?? "")}</td>
-                        <td className="py-1 pr-3">{String(r.current_auction_date ?? "")}</td>
-                        <td className="py-1 pr-3">{String(r.opening_bid ?? "")}</td>
+                      <tr key={i} className="border-t border-hairline align-top">
+                        <td className="py-1 pr-3">{r.address ?? "—"}</td>
+                        <td className="py-1 pr-3">{r.county ?? "—"}</td>
+                        <td className="py-1 pr-3">{r.state ?? "—"}</td>
+                        <td className="py-1 pr-3">{r.foreclosure_stage ?? "—"}</td>
+                        <td className="py-1 pr-3">{r.current_auction_date ?? "—"}</td>
+                        <td className="py-1 pr-3">
+                          <span className={r.record_status === "published" ? "text-positive" : "text-warn"}>{r.record_status}</span>
+                        </td>
+                        <td className="py-1 pr-3 text-navy-muted">{(r.eligibility_reasons ?? []).join("; ")}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -182,8 +266,9 @@ export function ImportWizard() {
           ) : null}
 
           <p className="mt-4 text-xs text-navy-muted">
-            Review the preview and rejected rows, then click <strong>Confirm import</strong> to upsert the
-            valid rows by (source, external_id). Existing records update; new ones are created.
+            Click <strong>Confirm import</strong> to upsert by (source, external_id): existing records
+            update in place (saved &amp; inquiry links preserved), new ones are created. Eligible records
+            publish automatically; the rest stay draft.
           </p>
         </Card>
       ) : null}
