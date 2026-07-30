@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { validateContact, validateFinancing, validateWatchlist } from "@/lib/validation";
+import { validateContact, validateFinancing, validateWatchlist, isBotSubmission } from "@/lib/validation";
+
+test("isBotSubmission: honeypot 'company' field detects bots", () => {
+  assert.equal(isBotSubmission({}), false);
+  assert.equal(isBotSubmission({ company: "" }), false);
+  assert.equal(isBotSubmission({ company: "  " }), false);
+  assert.equal(isBotSubmission({ company: "Acme Bots LLC" }), true);
+});
 
 test("validateContact: requires name and valid email", () => {
   assert.equal(validateContact({ firstName: "A", email: "a@b.com" }).ok, true);

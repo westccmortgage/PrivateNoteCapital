@@ -63,6 +63,10 @@ export function FinancingForm({ initial = {} }: { initial?: FinancingInitial }) 
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4 rounded-card border border-hairline bg-surface p-5 shadow-soft">
+      {/* Honeypot — hidden from users; bots that fill it are silently dropped. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label>Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
+      </div>
       {initial.propertyAddress ? (
         <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent-ink">
           Connected to: <strong>{initial.propertyAddress}</strong>

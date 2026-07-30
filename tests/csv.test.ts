@@ -8,7 +8,32 @@ import {
   normalizeStage,
   normalizePropertyType,
   validateImport,
+  neutralizeFormula,
+  sanitizeFilename,
 } from "@/lib/csv";
+
+test("neutralizeFormula: prefixes formula-triggering cells", () => {
+  assert.equal(neutralizeFormula("=1+1"), "'=1+1");
+  assert.equal(neutralizeFormula("+cmd"), "'+cmd");
+  assert.equal(neutralizeFormula("-2"), "'-2");
+  assert.equal(neutralizeFormula("@SUM(A1)"), "'@SUM(A1)");
+  assert.equal(neutralizeFormula("\t=x"), "'\t=x");
+  // Normal text is untouched.
+  assert.equal(neutralizeFormula("123 Main St"), "123 Main St");
+  assert.equal(neutralizeFormula(""), "");
+  assert.equal(neutralizeFormula(null), null);
+});
+
+test("sanitizeFilename: strips paths, control chars, leading dots", () => {
+  assert.equal(sanitizeFilename("../../etc/passwd"), "passwd");
+  assert.equal(sanitizeFilename("C:\\evil\\a.csv"), "a.csv");
+  assert.equal(sanitizeFilename("......hidden.csv"), "hidden.csv");
+  assert.equal(sanitizeFilename(""), "upload.csv");
+  assert.equal(sanitizeFilename(null), "upload.csv");
+  assert.ok(!sanitizeFilename("a<b>c:.csv").match(/[<>:]/));
+  // Digits are preserved (regression guard for the char-class fix).
+  assert.equal(sanitizeFilename("broward-2026.csv"), "broward-2026.csv");
+});
 
 test("parseCsv: quoted fields with commas and newlines", () => {
   const text = 'a,b,c\n1,"hello, world","line1\nline2"\n2,x,y';

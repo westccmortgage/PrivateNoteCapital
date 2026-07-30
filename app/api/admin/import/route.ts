@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdmin, getAdminSupabase } from "@/lib/supabase/server";
-import { parseCsvRecords, validateImport, type ColumnMap, type ImportRow } from "@/lib/csv";
+import { parseCsvRecords, validateImport, sanitizeFilename, type ColumnMap, type ImportRow } from "@/lib/csv";
 import { getAdapter } from "@/lib/adapters";
 
 export const runtime = "nodejs";
@@ -25,6 +25,11 @@ export async function POST(request: Request) {
   const file = form.get("file");
   if (!(file instanceof File)) return NextResponse.json({ error: "No file uploaded." }, { status: 400 });
   if (file.size > MAX_BYTES) return NextResponse.json({ error: "File exceeds 5 MB limit." }, { status: 413 });
+  // Validate MIME/extension loosely (browsers vary): accept text/csv or *.csv only.
+  const safeName = sanitizeFilename(file.name);
+  const looksCsv =
+    /\.csv$/i.test(safeName) || file.type === "text/csv" || file.type === "application/vnd.ms-excel" || file.type === "";
+  if (!looksCsv) return NextResponse.json({ error: "Only .csv files are accepted." }, { status: 415 });
 
   const text = await file.text();
   const { headers, records } = parseCsvRecords(text);
@@ -116,7 +121,7 @@ export async function POST(request: Request) {
 
   await admin.from("import_jobs").insert({
     source_name: adapter.id,
-    filename: file.name,
+    filename: safeName,
     records_received: records.length,
     records_created: created,
     records_updated: updated,

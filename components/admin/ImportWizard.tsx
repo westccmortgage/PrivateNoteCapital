@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Field, inputCls, Card, Badge } from "@/components/ui";
 import { ADAPTERS } from "@/lib/adapters";
+import { neutralizeFormula } from "@/lib/csv";
 
 interface RejectedRow {
   index: number;
@@ -64,10 +65,13 @@ export function ImportWizard() {
   function downloadRejected() {
     if (!validation?.rejected.length) return;
     const headers = validation.headers;
+    // Neutralize spreadsheet formula injection on export: a cell that begins
+    // with = + - @ is prefixed with ' so Excel/Sheets treats it as text.
+    const cell = (v: string) => JSON.stringify(neutralizeFormula(v) ?? "");
     const lines = [
       ["_reasons", ...headers].join(","),
       ...validation.rejected.map((r) =>
-        [JSON.stringify(r.reasons.join("; ")), ...headers.map((h) => JSON.stringify(r.raw[h] ?? ""))].join(","),
+        [cell(r.reasons.join("; ")), ...headers.map((h) => cell(r.raw[h] ?? ""))].join(","),
       ),
     ];
     const blob = new Blob([lines.join("\n")], { type: "text/csv" });

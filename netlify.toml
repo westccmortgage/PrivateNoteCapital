@@ -18,3 +18,8 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "microphone=(), camera=(), geolocation=()"
     X-DNS-Prefetch-Control = "off"
+    # HSTS: force HTTPS for a year incl. subdomains. Safe once the custom domain
+    # serves HTTPS (Netlify issues the cert). A Content-Security-Policy is NOT set
+    # here: it must be authored against the live Supabase URL and tested so it does
+    # not break auth/assets — see docs/PRIVATE-NOTE-CAPITAL-PREDEPLOYMENT-REPORT.md.
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"

@@ -63,6 +63,39 @@ export function parseCsvRecords(text: string): { headers: string[]; records: Rec
   return { headers, records };
 }
 
+// ------------------------- injection / sanitization ------------------------
+
+/**
+ * Neutralize CSV/spreadsheet formula injection. A cell beginning with =, +, -,
+ * @, tab, or CR is prefixed with a single quote so Excel/Sheets treats it as
+ * text, not a formula. Apply to any text field before it is stored, displayed
+ * in a spreadsheet, or re-exported to CSV. Numbers/dates are parsed separately,
+ * so this only guards free-text fields (address, county, city, notes, …).
+ */
+export function neutralizeFormula(v: string | null | undefined): string | null {
+  if (v == null) return null;
+  const s = String(v);
+  if (s === "") return "";
+  return /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+}
+
+/**
+ * Sanitize an uploaded filename for safe storage/display: strip path
+ * separators and control characters, collapse whitespace, cap length. Never use
+ * a raw client filename in a filesystem path.
+ */
+export function sanitizeFilename(name: string | null | undefined): string {
+  if (!name) return "upload.csv";
+  const base = String(name).split(/[\\/]/).pop() || "upload.csv";
+  const cleaned = base
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x00-\x1f<>:"/\\|?*]+/g, "_") // control + path-dangerous chars
+    .replace(/^\.+/, "") // no leading dots
+    .replace(/\s+/g, " ")
+    .trim();
+  return (cleaned || "upload.csv").slice(0, 200);
+}
+
 // ---------------------------- normalization --------------------------------
 
 export function coerceNumber(v: string | undefined | null): number | null {

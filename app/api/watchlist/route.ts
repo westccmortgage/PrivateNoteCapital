@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { validateWatchlist } from "@/lib/validation";
+import { validateWatchlist, isBotSubmission } from "@/lib/validation";
 import { recordInterest } from "@/lib/lead";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { getCurrentUser, getAdminSupabase } from "@/lib/supabase/server";
@@ -21,6 +21,11 @@ export async function POST(request: Request) {
     body = (await request.json()) as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
+
+  // Honeypot: silently accept bots without processing.
+  if (isBotSubmission(body)) {
+    return NextResponse.json({ ok: true, forwarded: false, message: "You're subscribed." });
   }
 
   const { ok, errors, value } = validateWatchlist(body);

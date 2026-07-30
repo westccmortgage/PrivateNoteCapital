@@ -36,6 +36,7 @@ export function WatchlistForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          company: fd.get("company"), // honeypot
           firstName: fd.get("firstName"),
           lastName: fd.get("lastName"),
           email: fd.get("email"),
@@ -75,6 +76,10 @@ export function WatchlistForm() {
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5 rounded-card border border-hairline bg-surface p-5 shadow-soft">
+      {/* Honeypot — hidden from users; bots that fill it are silently dropped. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label>Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
+      </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="First name" required><input name="firstName" required className={inputCls} /></Field>
         <Field label="Last name"><input name="lastName" className={inputCls} /></Field>

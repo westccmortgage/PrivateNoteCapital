@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { env, supabasePublicConfigured, supabaseAdminConfigured } from "@/lib/env";
+import { supabasePublicConfigured } from "@/lib/env";
+import { serverEnv, supabaseAdminConfigured } from "@/lib/env.server";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 // Cookie-bound server client (anon key + RLS). Reads the signed-in user's
@@ -8,7 +9,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 export function getServerSupabase(): SupabaseClient | null {
   if (!supabasePublicConfigured()) return null;
   const cookieStore = cookies();
-  return createServerClient(env.supabaseUrl, env.supabaseAnonKey, {
+  return createServerClient(serverEnv.supabaseUrl, serverEnv.supabaseAnonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -31,7 +32,7 @@ export function getServerSupabase(): SupabaseClient | null {
 // logging, and admin operations. Bypasses RLS. Never expose to the browser.
 export function getAdminSupabase(): SupabaseClient | null {
   if (!supabaseAdminConfigured()) return null;
-  return createClient(env.supabaseUrl, env.supabaseServiceRole, {
+  return createClient(serverEnv.supabaseUrl, serverEnv.supabaseServiceRole, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }

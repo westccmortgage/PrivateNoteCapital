@@ -12,7 +12,7 @@
 // only and never reach the browser.
 
 import crypto from "node:crypto";
-import { env } from "@/lib/env";
+import { serverEnv } from "@/lib/env.server";
 import { formatMoney } from "@/lib/format";
 import { labelFor, FINANCING_TYPES, FORECLOSURE_STAGES } from "@/lib/constants";
 
@@ -144,9 +144,10 @@ export function buildGrcrmPayload(lead: CrmLead): Record<string, unknown> {
 
 /** Forward a structured lead to GRCRM. Best-effort; never throws. */
 export async function sendToGRCRM(lead: CrmLead): Promise<CrmResult> {
-  const url = env.grcrmWebhookUrl;
+  const url = serverEnv.grcrmWebhookUrl;
   if (!url) {
-    console.log(`[grcrm] webhook not configured. Lead action=${lead.actionType} email=${lead.email ?? "—"}`);
+    // Do not log PII (email/phone). Action type only.
+    console.log(`[grcrm] webhook not configured; lead stored locally (action=${lead.actionType}).`);
     return { configured: false, sent: false, message: "GRCRM not configured (lead stored locally)." };
   }
   const payload = buildGrcrmPayload(lead);
@@ -155,8 +156,8 @@ export async function sendToGRCRM(lead: CrmLead): Promise<CrmResult> {
     "Content-Type": "application/json",
     "X-PNC-Source": "PrivateNoteCapital.com",
   };
-  if (env.grcrmWebhookSecret) {
-    const sig = crypto.createHmac("sha256", env.grcrmWebhookSecret).update(body).digest("hex");
+  if (serverEnv.grcrmWebhookSecret) {
+    const sig = crypto.createHmac("sha256", serverEnv.grcrmWebhookSecret).update(body).digest("hex");
     headers["X-PNC-Signature"] = `sha256=${sig}`;
   }
   try {
