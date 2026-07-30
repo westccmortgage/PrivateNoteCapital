@@ -40,7 +40,7 @@ export default async function SavedPage() {
     );
   }
 
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   let items: SavedItem[] = [];
   if (supabase) {
     const { data } = await supabase

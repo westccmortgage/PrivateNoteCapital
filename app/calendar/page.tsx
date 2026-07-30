@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CalendarPage() {
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   let rows: ForeclosureProperty[] = [];
   let configured = false;
   if (supabase) {

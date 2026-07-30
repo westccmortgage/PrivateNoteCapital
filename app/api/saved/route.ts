@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Please sign in to save properties." }, { status: 401 });
 
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   if (!supabase) return NextResponse.json({ error: "Not configured." }, { status: 503 });
 
   let body: Record<string, unknown>;
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Please sign in." }, { status: 401 });
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   if (!supabase) return NextResponse.json({ error: "Not configured." }, { status: 503 });
 
   const { searchParams } = new URL(request.url);

@@ -21,7 +21,7 @@ export interface OpportunitySection {
 }
 
 export async function getHomeSections(): Promise<OpportunitySection[]> {
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   if (!supabase) return [];
 
   const base = () =>

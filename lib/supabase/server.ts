@@ -6,9 +6,10 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 // Cookie-bound server client (anon key + RLS). Reads the signed-in user's
 // session in Server Components and Route Handlers. Returns null when unconfigured.
-export function getServerSupabase(): SupabaseClient | null {
+// Next 15: cookies() is async, so this is async too.
+export async function getServerSupabase(): Promise<SupabaseClient | null> {
   if (!supabasePublicConfigured()) return null;
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   return createServerClient(serverEnv.supabaseUrl, serverEnv.supabaseAnonKey, {
     cookies: {
       getAll() {
@@ -39,7 +40,7 @@ export function getAdminSupabase(): SupabaseClient | null {
 
 /** Resolve the signed-in user (or null) from the cookie-bound client. */
 export async function getCurrentUser() {
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   if (!supabase) return null;
   const {
     data: { user },

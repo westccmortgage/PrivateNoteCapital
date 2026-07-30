@@ -17,10 +17,10 @@ export const metadata: Metadata = {
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const filter = parseSearchParams(searchParams);
-  const supabase = getServerSupabase();
+  const filter = parseSearchParams(await searchParams); // Next 15: searchParams is async
+  const supabase = await getServerSupabase();
   const result = await runSearch(supabase, filter);
 
   return (

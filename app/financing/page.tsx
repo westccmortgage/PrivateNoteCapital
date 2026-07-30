@@ -9,13 +9,14 @@ export const metadata: Metadata = {
     "Request an initial financing review — auction acquisition, bridge, fix-and-flip, rehabilitation, DSCR takeout, or private capital.",
 };
 
-export default function FinancingPage({
+export default async function FinancingPage({
   searchParams,
 }: {
-  searchParams: Record<string, string | undefined>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  const type = searchParams.type;
-  const isReview = searchParams.intent === "review";
+  const sp = await searchParams; // Next 15: searchParams is async
+  const type = sp.type;
+  const isReview = sp.intent === "review";
   const heading = isReview
     ? "Request a deal review"
     : type
@@ -50,11 +51,11 @@ export default function FinancingPage({
           <FinancingForm
             initial={{
               financingType: type,
-              propertyId: searchParams.propertyId,
-              propertyAddress: searchParams.propertyAddress,
-              state: searchParams.state,
-              county: searchParams.county,
-              intent: searchParams.intent,
+              propertyId: sp.propertyId,
+              propertyAddress: sp.propertyAddress,
+              state: sp.state,
+              county: sp.county,
+              intent: sp.intent,
             }}
           />
         </div>

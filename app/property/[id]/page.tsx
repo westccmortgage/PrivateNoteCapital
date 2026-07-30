@@ -19,7 +19,7 @@ import {
 export const dynamic = "force-dynamic";
 
 async function fetchProperty(id: string): Promise<{ p: ForeclosureProperty | null; events: AuctionEvent[] }> {
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   if (!supabase) return { p: null, events: [] };
   const { data: p } = await supabase
     .from("foreclosure_properties")
@@ -36,8 +36,9 @@ async function fetchProperty(id: string): Promise<{ p: ForeclosureProperty | nul
   return { p: p as ForeclosureProperty, events: (events ?? []) as AuctionEvent[] };
 }
 
-export default async function PropertyPage({ params }: { params: { id: string } }) {
-  const { p, events } = await fetchProperty(params.id);
+export default async function PropertyPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params; // Next 15: params is async
+  const { p, events } = await fetchProperty(id);
 
   if (!p) {
     // A genuinely missing published record is a 404; an unconfigured backend

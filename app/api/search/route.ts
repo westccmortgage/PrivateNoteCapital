@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   const raw: Record<string, string> = {};
   searchParams.forEach((v, k) => (raw[k] = v));
   const filter = parseSearchParams(raw);
-  const supabase = getServerSupabase();
+  const supabase = await getServerSupabase();
   const result = await runSearch(supabase, filter);
   return NextResponse.json(result);
 }
