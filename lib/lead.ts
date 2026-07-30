@@ -5,7 +5,7 @@
 // never lost to a transient CRM outage.
 
 import { getAdminSupabase } from "@/lib/supabase/server";
-import { sendToGRCRM, type CrmLead } from "@/lib/crm";
+import { sendToGRCRM, eventIdFor, type CrmLead } from "@/lib/crm";
 import { sendNotificationEmail } from "@/lib/notify";
 
 export interface InterestRecord {
@@ -63,37 +63,62 @@ export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> 
     consentAt: rec.consent ? nowIso : undefined,
   };
 
-  // 1) Forward to GRCRM (best-effort).
-  const crm = await sendToGRCRM(crmLead);
+  const eventId = eventIdFor(crmLead);
 
-  // 2) Persist the interest with the CRM outcome (best-effort; no-op if DB unset).
+  // 1) DURABLE CAPTURE FIRST: persist the interest (state="received") BEFORE the
+  //    external CRM call, so a crash mid-send never loses the lead. No-op if the
+  //    DB is unconfigured (then the email fallback + logs are the only capture —
+  //    documented limitation).
   let stored = false;
+  let interestId: string | null = null;
   const admin = getAdminSupabase();
   if (admin) {
-    const { error } = await admin.from("property_interests").insert({
-      user_id: rec.userId ?? null,
-      property_id: rec.propertyId ?? null,
-      action_type: rec.actionType,
-      financing_type: rec.financingType ?? null,
-      requested_amount: rec.requestedAmount ?? null,
-      first_name: rec.firstName ?? null,
-      last_name: rec.lastName ?? null,
-      email: rec.email ?? null,
-      phone: rec.phone ?? null,
-      state: rec.state ?? null,
-      county: rec.county ?? null,
-      investor_experience: rec.investorExperience ?? null,
-      notes: rec.notes ?? null,
-      utm_source: rec.attribution?.utm_source ?? null,
-      utm_medium: rec.attribution?.utm_medium ?? null,
-      utm_campaign: rec.attribution?.utm_campaign ?? null,
-      referrer: rec.attribution?.referrer ?? null,
-      consent_at: rec.consent ? nowIso : null,
-      crm_forwarded: crm.sent,
-      crm_error: crm.sent ? null : crm.message,
-    });
+    const { data, error } = await admin
+      .from("property_interests")
+      .insert({
+        user_id: rec.userId ?? null,
+        property_id: rec.propertyId ?? null,
+        action_type: rec.actionType,
+        financing_type: rec.financingType ?? null,
+        requested_amount: rec.requestedAmount ?? null,
+        first_name: rec.firstName ?? null,
+        last_name: rec.lastName ?? null,
+        email: rec.email ?? null,
+        phone: rec.phone ?? null,
+        state: rec.state ?? null,
+        county: rec.county ?? null,
+        investor_experience: rec.investorExperience ?? null,
+        notes: rec.notes ?? null,
+        utm_source: rec.attribution?.utm_source ?? null,
+        utm_medium: rec.attribution?.utm_medium ?? null,
+        utm_campaign: rec.attribution?.utm_campaign ?? null,
+        referrer: rec.attribution?.referrer ?? null,
+        consent_at: rec.consent ? nowIso : null,
+        event_id: eventId,
+        delivery_state: "received",
+        crm_forwarded: false,
+        crm_error: null,
+      })
+      .select("id")
+      .maybeSingle();
     stored = !error;
+    interestId = (data?.id as string) ?? null;
     if (error) console.error("[lead] insert error:", error.message);
+  }
+
+  // 2) Forward to GRCRM (best-effort; classified delivery state).
+  const crm = await sendToGRCRM(crmLead);
+
+  // 3) Record the delivery outcome on the persisted row.
+  if (admin && interestId) {
+    await admin
+      .from("property_interests")
+      .update({
+        delivery_state: crm.state,
+        crm_forwarded: crm.state === "delivered",
+        crm_error: crm.state === "delivered" ? null : crm.message,
+      })
+      .eq("id", interestId);
   }
 
   // 3) Email fallback so no lead is lost before the CRM/DB are wired.

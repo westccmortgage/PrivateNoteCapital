@@ -37,11 +37,41 @@ export interface CrmLead {
   consentAt?: string;
 }
 
+// Delivery states (Section 8 of the remediation spec). Distinguish a definite
+// success/rejection from retryable failures and ambiguous timeouts.
+export type DeliveryState =
+  | "delivered" // 2xx from the receiver
+  | "rejected" // 4xx (except 429) — do NOT retry blindly
+  | "retry_pending" // 429/5xx/network — safe to retry
+  | "sending_unknown" // request sent but response never arrived (timeout) — ambiguous
+  | "not_configured"; // no webhook URL
+
 export interface CrmResult {
   configured: boolean;
-  sent: boolean;
+  sent: boolean; // true only when state === "delivered"
   status?: number;
+  state: DeliveryState;
+  eventId: string;
   message: string;
+}
+
+/**
+ * Deterministic sender event ID from the meaningful content of a submission.
+ * The SAME logical submission yields the SAME id (idempotency identity for the
+ * sender), so a retry is recognizable. NOTE: the verified GRCRM receiver has no
+ * idempotency-key support — it dedupes contacts by email/phone only — so this ID
+ * provides sender-side traceability, not exactly-once delivery.
+ */
+export function eventIdFor(lead: CrmLead): string {
+  const basis = [
+    lead.actionType,
+    (lead.email || "").toLowerCase(),
+    lead.phone || "",
+    lead.propertyId || "",
+    lead.financingType || "",
+    lead.requestedAmount ?? "",
+  ].join("|");
+  return "pnc_" + crypto.createHash("sha256").update(basis).digest("hex").slice(0, 24);
 }
 
 const ACTION_LABEL: Record<string, string> = {
@@ -101,14 +131,22 @@ export function buildMessage(lead: CrmLead): string {
   return lines.join("\n");
 }
 
-/** Full structured payload. Canonical four + structured extras + suggestions. */
+/** Full payload. The verified GRCRM lead-inbound receiver reads only the flat
+ *  scalar fields (name/first_name/last_name/email/phone/message→notes); it maps
+ *  those into a deduped Contact. The structured objects below are additive and
+ *  currently IGNORED by that receiver (kept for forward-compatibility and because
+ *  the same data is already embedded in `message`). See
+ *  docs/GRCRM-CONTRACT-MAPPING.md. */
 export function buildGrcrmPayload(lead: CrmLead): Record<string, unknown> {
   return {
-    // Canonical (back-compatible with the existing lead-inbound handler):
+    // Flat scalars the receiver actually maps (verified against lead-inbound.mjs):
     name: fullName(lead) || lead.email || "Website lead",
+    first_name: lead.firstName ?? "",
+    last_name: lead.lastName ?? "",
     email: lead.email ?? "",
     phone: lead.phone ?? "",
-    message: buildMessage(lead),
+    message: buildMessage(lead), // → receiver `notes` (carries all context)
+    external_event_id: eventIdFor(lead), // sender traceability (receiver ignores)
     // Structured extras (a GRCRM handler MAY map these; safe to ignore):
     source: "Private Note Capital",
     sourceDetail: lead.sourceDetail ?? "",
@@ -142,31 +180,84 @@ export function buildGrcrmPayload(lead: CrmLead): Record<string, unknown> {
   };
 }
 
-/** Forward a structured lead to GRCRM. Best-effort; never throws. */
+/** Classify an HTTP status into a delivery state (verified receiver semantics). */
+export function classifyStatus(status: number): DeliveryState {
+  if (status >= 200 && status < 300) return "delivered";
+  if (status === 429) return "retry_pending"; // rate limited — retry later
+  if (status >= 500) return "retry_pending"; // server-side — retry
+  if (status >= 400) return "rejected"; // 400/401/403/413/422 — do not retry blindly
+  return "retry_pending";
+}
+
+/** Classify a thrown fetch error. A timeout/abort is AMBIGUOUS (the request may
+ *  have been received); any other network error is retryable. */
+export function classifyError(err: unknown): DeliveryState {
+  return err instanceof Error && err.name === "AbortError" ? "sending_unknown" : "retry_pending";
+}
+
+const GRCRM_TIMEOUT_MS = 8_000;
+
+/**
+ * Forward a lead to the GRCRM lead-inbound webhook. Best-effort; never throws.
+ * The token is embedded in serverEnv.grcrmWebhookUrl (?token=…) — the verified
+ * receiver's credential. Returns an explicit DeliveryState so the caller can
+ * persist it and never report "success" merely because the request was sent.
+ */
 export async function sendToGRCRM(lead: CrmLead): Promise<CrmResult> {
+  const eventId = eventIdFor(lead);
   const url = serverEnv.grcrmWebhookUrl;
   if (!url) {
-    // Do not log PII (email/phone). Action type only.
     console.log(`[grcrm] webhook not configured; lead stored locally (action=${lead.actionType}).`);
-    return { configured: false, sent: false, message: "GRCRM not configured (lead stored locally)." };
+    return { configured: false, sent: false, state: "not_configured", eventId, message: "GRCRM not configured (lead stored locally)." };
   }
   const payload = buildGrcrmPayload(lead);
   const body = JSON.stringify(payload);
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "X-PNC-Source": "PrivateNoteCapital.com",
+    // Idempotency hint for any future receiver support (current receiver ignores it).
+    "X-PNC-Event-Id": eventId,
   };
+  // The verified receiver authenticates by the URL token, NOT HMAC. We still send
+  // a signature when a secret is configured (harmless, forward-compatible).
   if (serverEnv.grcrmWebhookSecret) {
     const sig = crypto.createHmac("sha256", serverEnv.grcrmWebhookSecret).update(body).digest("hex");
     headers["X-PNC-Signature"] = `sha256=${sig}`;
   }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), GRCRM_TIMEOUT_MS);
   try {
-    const res = await fetch(url, { method: "POST", headers, body });
-    return res.ok
-      ? { configured: true, sent: true, status: res.status, message: "Lead sent to GRCRM." }
-      : { configured: true, sent: false, status: res.status, message: `GRCRM returned ${res.status}.` };
+    const res = await fetch(url, { method: "POST", headers, body, signal: controller.signal });
+    const state = classifyStatus(res.status);
+    return {
+      configured: true,
+      sent: state === "delivered",
+      status: res.status,
+      state,
+      eventId,
+      message:
+        state === "delivered"
+          ? "Lead delivered to GRCRM."
+          : state === "rejected"
+            ? `GRCRM rejected the lead (${res.status}).`
+            : `GRCRM temporarily unavailable (${res.status}); will retry.`,
+    };
   } catch (err) {
-    console.error("[grcrm] webhook error:", err instanceof Error ? err.message : err);
-    return { configured: true, sent: false, message: "GRCRM request failed; lead stored." };
+    // Timeout/abort → ambiguous (request may have been received); network → retry.
+    const state = classifyError(err);
+    console.error("[grcrm] webhook error:", err instanceof Error ? err.message : "unknown");
+    return {
+      configured: true,
+      sent: false,
+      state,
+      eventId,
+      message:
+        state === "sending_unknown"
+          ? "GRCRM send timed out; delivery unknown."
+          : "GRCRM request failed; will retry.",
+    };
+  } finally {
+    clearTimeout(timer);
   }
 }
