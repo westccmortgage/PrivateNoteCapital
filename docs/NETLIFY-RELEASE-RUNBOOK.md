@@ -1,8 +1,24 @@
 # Netlify release runbook
 
-Executable steps for two **independent** Netlify sites from one repo. **This audit does not
+Executable steps for two **independent** Netlify sites from one repo. **This phase does not
 deploy.** Both are **Next.js SSR** apps — they require the Netlify Next.js runtime and must
 **not** be configured as a static `dist/` publish.
+
+## Framework compatibility (verified this phase)
+
+| Item | Value |
+|---|---|
+| Next.js (Site A, `main`) | **15.5.22** (security backport line) |
+| Next.js (Site B, `debt-platform`) | 14.2.35 (preserved; unchanged) |
+| React | 18.3.1 (both) |
+| Netlify runtime | `@netlify/plugin-nextjs` **v5** — supports Next 13/14/15 (both sites) |
+| Node | 20 (`netlify.toml` `NODE_VERSION`, satisfies Next 15 engines `>=20`) |
+| Publish | `.next` via the plugin — **SSR, not static export**. Route handlers under `/api/*` and dynamic pages run as Netlify functions the plugin provisions. |
+| Image optimization | not used (`next/image` absent; `sharp` not installed) — image-optimizer advisories N/A |
+
+No `netlify.toml` change is required for the Next 15 upgrade: `[[plugins]]
+package="@netlify/plugin-nextjs"` lets Netlify manage the compatible runtime version. Build
+command `npm run build`, publish `.next` are unchanged.
 
 ## Deployment matrix
 
@@ -64,11 +80,17 @@ has no database. See `docs/debt-subdomain-migration.md`.
 
 ```bash
 npm ci
-npm run typecheck   # tsc --noEmit
-npm run lint        # next lint
-npm test            # unit tests
-npm run build       # next build (SSR)
+npm run typecheck        # tsc --noEmit
+npm run lint             # next lint
+npm test                 # unit tests (49)
+npm run build            # next build (SSR)
+npm audit --omit=dev     # MUST be 0 high/critical (production runtime)
 ```
+
+Gate status this phase: typecheck 0 · lint 0 · tests 49/49 · build 0 ·
+`npm audit --omit=dev` **0 vulnerabilities**. (Full `npm audit` shows dev-only
+eslint-toolchain highs — build-time only, never shipped; see
+`docs/NEXTJS-SECURITY-UPGRADE.md`.)
 
 ## Deploy order
 
