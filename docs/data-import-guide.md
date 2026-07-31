@@ -3,6 +3,10 @@
 How property data gets into the platform. **Approved sources only** — no scraping, no
 fabricated listings in production.
 
+> **Primary path is now the automatic county collectors** (Palm Beach + Los Angeles) —
+> see [`county-collectors.md`](./county-collectors.md) and **`/admin/data-sync`**. CSV
+> import below remains available as a **backup**.
+
 ## Load real inventory NOW (owner quick-start)
 
 1. Sign in as an admin and open **`/admin/import`**.

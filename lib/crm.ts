@@ -29,6 +29,12 @@ export interface CrmLead {
   propertyId?: string;
   propertyAddress?: string;
   auctionDate?: string;
+  // County-collector source references (retained on every property inquiry).
+  sourceName?: string; // e.g. palm_beach_county | la_county_recorder
+  apn?: string; // APN / PCN / AIN
+  caseNumber?: string; // Palm Beach case number
+  documentNumber?: string; // LA recorder document number
+  foreclosureStage?: string;
   investorExperience?: string;
   notes?: string;
   sourceDetail?: string; // e.g. "financing form", "property page"
@@ -138,6 +144,11 @@ export function buildMessage(lead: CrmLead): string {
     lead.state || lead.county
       ? `Location: ${[lead.county && `${lead.county} County`, lead.state].filter(Boolean).join(", ")}`
       : null,
+    lead.apn ? `APN / PCN: ${lead.apn}` : null,
+    lead.caseNumber ? `Case number: ${lead.caseNumber}` : null,
+    lead.documentNumber ? `Recorder document #: ${lead.documentNumber}` : null,
+    lead.sourceName ? `Source: ${lead.sourceName}` : null,
+    lead.foreclosureStage ? `Foreclosure stage: ${lead.foreclosureStage}` : null,
     lead.auctionDate ? `Auction date: ${lead.auctionDate}` : null,
     lead.financingType ? `Financing: ${labelFor(FINANCING_TYPES, lead.financingType)}` : null,
     lead.requestedAmount != null ? `Requested amount: ${formatMoney(lead.requestedAmount)}` : null,
@@ -193,7 +204,13 @@ export function buildGrcrmPayload(lead: CrmLead): Record<string, unknown> {
       requestedAmount: lead.requestedAmount ?? null,
       auctionDate: lead.auctionDate ?? "",
       investorExperience: lead.investorExperience ?? "",
-      stageLabel: lead.notes ? "" : labelFor(FORECLOSURE_STAGES, ""),
+      // County-collector source references (Section 17).
+      sourceName: lead.sourceName ?? "",
+      apn: lead.apn ?? "",
+      caseNumber: lead.caseNumber ?? "",
+      documentNumber: lead.documentNumber ?? "",
+      foreclosureStage: lead.foreclosureStage ?? "",
+      stageLabel: lead.foreclosureStage ? labelFor(FORECLOSURE_STAGES, lead.foreclosureStage) : "",
     },
     privateDebt: {
       capitalRange: lead.capitalRange ?? "",

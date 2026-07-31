@@ -96,3 +96,29 @@ export function labelFor(
   if (!value) return "—";
   return list.find((o) => o.value === value)?.label ?? value;
 }
+
+// Automatic county collectors (Palm Beach + Los Angeles). Client-safe labels so
+// the public search / cards / detail can show a human source name without
+// importing any server-only provider code. Keep in sync with
+// lib/providers/registry.ts PROVIDER_SOURCE_LABELS.
+export const COLLECTOR_SOURCES = [
+  { value: "palm_beach_county", label: "Official Palm Beach County records" },
+  { value: "la_county_recorder", label: "Los Angeles County recorded-document feed" },
+] as const;
+
+const SOURCE_LABELS: Record<string, string> = {
+  palm_beach_county: "Official Palm Beach County records",
+  la_county_recorder: "Los Angeles County recorded-document feed",
+  manual_csv: "Operator CSV",
+  california_foreclosure: "California trustee-sale export",
+  palm_beach_clerk: "Palm Beach County (CSV export)",
+  broward_clerk: "Broward County (CSV export)",
+  miami_dade_clerk: "Miami-Dade County (CSV export)",
+  propertyradar: "PropertyRadar export",
+};
+
+/** Human-friendly source label for a stored source_name (falls back gracefully). */
+export function sourceLabel(name: string | null | undefined): string {
+  if (!name) return "—";
+  return SOURCE_LABELS[name] ?? name.replace(/_/g, " ");
+}

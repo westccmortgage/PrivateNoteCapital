@@ -9,7 +9,7 @@ import {
   bedBath,
   formatMoney,
 } from "@/lib/property";
-import { labelFor } from "@/lib/constants";
+import { labelFor, sourceLabel } from "@/lib/constants";
 import { FORECLOSURE_STAGES } from "@/lib/constants";
 
 function stageTone(stage: string | null): "neutral" | "accent" | "warn" {
@@ -49,7 +49,7 @@ export function PropertyCard({ p }: { p: ForeclosureProperty }) {
 
       <div className="mt-3 flex items-center justify-between border-t border-hairline pt-3 text-xs text-navy-muted">
         <span className="truncate">{bedBath(p)}</span>
-        <span className="ml-2 shrink-0 font-mono uppercase tracking-wide">{p.source_name}</span>
+        <span className="ml-2 shrink-0 truncate font-mono uppercase tracking-wide" title={sourceLabel(p.source_name)}>{sourceLabel(p.source_name)}</span>
       </div>
     </Link>
   );

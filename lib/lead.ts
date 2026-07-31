@@ -43,6 +43,13 @@ export interface LeadOutcome {
 
 export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> {
   const nowIso = new Date().toISOString();
+  const admin = getAdminSupabase();
+
+  // Retain the county-collector source references on every property inquiry
+  // (Section 17): APN/PCN/AIN, Palm Beach case number, LA recorder document
+  // number, source, stage. Looked up from the property when we have its id.
+  const ref = await loadPropertyRef(admin, rec.propertyId ?? null);
+
   const crmLead: CrmLead = {
     firstName: rec.firstName,
     lastName: rec.lastName,
@@ -52,10 +59,15 @@ export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> 
     financingType: rec.financingType ?? undefined,
     requestedAmount: rec.requestedAmount ?? null,
     state: rec.state,
-    county: rec.county,
+    county: rec.county || ref?.county || undefined,
     propertyId: rec.propertyId ?? undefined,
-    propertyAddress: rec.propertyAddress,
-    auctionDate: rec.auctionDate ?? undefined,
+    propertyAddress: rec.propertyAddress || ref?.address || undefined,
+    auctionDate: rec.auctionDate ?? ref?.current_auction_date ?? undefined,
+    sourceName: ref?.source_name ?? undefined,
+    apn: ref?.apn ?? undefined,
+    caseNumber: ref?.case_number ?? undefined,
+    documentNumber: ref?.document_number ?? undefined,
+    foreclosureStage: ref?.foreclosure_stage ?? undefined,
     investorExperience: rec.investorExperience,
     notes: rec.notes,
     sourceDetail: rec.sourceDetail,
@@ -81,7 +93,6 @@ export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> 
   //    documented limitation).
   let stored = false;
   let interestId: string | null = null;
-  const admin = getAdminSupabase();
   if (admin) {
     const { data, error } = await admin
       .from("property_interests")
@@ -159,4 +170,38 @@ export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> 
   if (!crm.sent) console.warn(`[lead] CRM not forwarded (${crm.message}) for action=${rec.actionType}`);
 
   return { stored, crmForwarded: crm.sent, crmMessage: crm.message, emailed: email.sent };
+}
+
+interface PropertyRef {
+  source_name: string | null;
+  apn: string | null;
+  case_number: string | null;
+  document_number: string | null;
+  county: string | null;
+  address: string | null;
+  foreclosure_stage: string | null;
+  current_auction_date: string | null;
+}
+
+/** Load a property's source references for the lead. Selects rich/provider-meta
+ *  columns only when they exist (0004/0005 optional), so it never errors. */
+async function loadPropertyRef(
+  admin: ReturnType<typeof getAdminSupabase>,
+  propertyId: string | null,
+): Promise<PropertyRef | null> {
+  if (!admin || !propertyId) return null;
+  // Try the full select first; fall back to core columns if 0004/0005 absent.
+  const full = await admin
+    .from("foreclosure_properties")
+    .select("source_name, apn, case_number, document_number, county, address, foreclosure_stage, current_auction_date")
+    .eq("id", propertyId)
+    .maybeSingle();
+  if (!full.error && full.data) return full.data as PropertyRef;
+  const core = await admin
+    .from("foreclosure_properties")
+    .select("source_name, apn, county, address, foreclosure_stage, current_auction_date")
+    .eq("id", propertyId)
+    .maybeSingle();
+  if (core.error || !core.data) return null;
+  return { ...(core.data as Partial<PropertyRef>), case_number: null, document_number: null } as PropertyRef;
 }

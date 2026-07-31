@@ -3,7 +3,7 @@ import { Shell, Card, Badge } from "@/components/ui";
 import { PropertyActions } from "@/components/property/PropertyActions";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { supabasePublicConfigured } from "@/lib/env";
-import { labelFor, FORECLOSURE_STAGES, PROPERTY_TYPES, OCCUPANCY } from "@/lib/constants";
+import { labelFor, sourceLabel, FORECLOSURE_STAGES, PROPERTY_TYPES, OCCUPANCY } from "@/lib/constants";
 import {
   type ForeclosureProperty,
   type AuctionEvent,
@@ -124,7 +124,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-wide text-navy-muted">Data source</p>
-                <p className="font-medium text-navy">{p.source_name}</p>
+                <p className="font-medium text-navy">{sourceLabel(p.source_name)}</p>
               </div>
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-wide text-navy-muted">Last updated</p>

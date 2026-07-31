@@ -37,8 +37,11 @@ export default async function AdminImportPage() {
     <Shell className="py-8">
       <h1 className="font-serif text-2xl font-semibold text-navy sm:text-3xl">Data Import</h1>
       <p className="mt-1 text-sm text-navy-muted">
-        Import property records from approved sources only. Files validate before anything is written;
-        invalid rows are rejected and downloadable. Restricted sources import as draft, never public.
+        CSV import is the <strong>backup</strong> path. The primary path is the automatic county
+        collectors at{" "}
+        <a href="/admin/data-sync" className="font-semibold text-accent hover:underline">/admin/data-sync</a>.
+        Files validate before anything is written; invalid rows are rejected and downloadable. Restricted
+        sources import as draft, never public.
       </p>
 
       <div className="mt-6">

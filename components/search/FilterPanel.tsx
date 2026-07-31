@@ -9,9 +9,17 @@ import {
   PROPERTY_TYPES,
   COUNTIES,
   SORT_OPTIONS,
+  COLLECTOR_SOURCES,
 } from "@/lib/constants";
 import { SUPPORTED_STATES } from "@/lib/site";
 import { ADAPTERS } from "@/lib/adapters";
+
+// Source dropdown: the automatic county collectors first, then CSV/import
+// profiles. De-duplicated by value.
+const SOURCE_OPTIONS = [
+  ...COLLECTOR_SOURCES.map((s) => ({ value: s.value, label: s.label })),
+  ...ADAPTERS.map((a) => ({ value: a.id, label: a.label })),
+];
 import { toQueryString, type SearchFilter } from "@/lib/search";
 
 const CLASSES = [
@@ -109,7 +117,7 @@ export function FilterPanel({ filter }: { filter: SearchFilter }) {
         <Field label="Data source">
           <select className={inputCls} value={f.source ?? ""} onChange={(e) => set("source", e.target.value || undefined)}>
             <option value="">All sources</option>
-            {ADAPTERS.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
+            {SOURCE_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         </Field>
       </div>
