@@ -5,6 +5,7 @@ export const COMPANY = {
   legalName: "West Coast Capital Mortgage Inc.",
   shortName: "West Coast Capital Mortgage",
   nmls: "2817729",
+  dreCorporationLicense: "02440065",
   phoneOffice: "310-654-1577", // Office / loan-officer questions
   phoneDirect: "310-686-5053", // Anatoliy direct
   email: "westccmortgage@gmail.com",
