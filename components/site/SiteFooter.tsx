@@ -24,7 +24,10 @@ export function SiteFooter() {
             <p className="font-serif text-base font-semibold text-navy">{SITE.name}</p>
             <p className="mt-1 text-sm text-navy-muted">{SITE.tagline} — California &amp; Florida.</p>
             <p className="mt-3 text-xs text-navy-muted">
-              Operated by {COMPANY.legalName} · NMLS {COMPANY.nmls}
+              Operated by {COMPANY.legalName} · NMLS #{COMPANY.nmls} · CA DRE Corporation License #{COMPANY.dreCorporationLicense}
+            </p>
+            <p className="mt-1 text-xs text-navy-muted">
+              {COMPANY.mailingAddress} · {COMPANY.phoneOffice}
             </p>
           </div>
 
