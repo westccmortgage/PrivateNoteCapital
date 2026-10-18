@@ -6,7 +6,7 @@ import { NOT_AN_OFFER } from "@/lib/trust-deed";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Private Note Capital is operated by West Coast Capital Mortgage Inc. — foreclosure & auction intelligence plus a private-debt capital-partner program.",
+  description: "Private Note Capital is operated by West Coast Capital Mortgage Inc. — Florida auction research, California property listings and private capital resources.",
 };
 
 export default function CompanyPage() {
@@ -16,19 +16,29 @@ export default function CompanyPage() {
         <Kicker>About</Kicker>
         <h1 className="font-serif text-3xl font-semibold text-navy">One platform, operated by {COMPANY.shortName}</h1>
         <p className="mt-3 text-navy-muted">
-          Private Note Capital combines two things real-estate investors need in one place: a
-          searchable marketplace of California &amp; Florida foreclosure and auction opportunities,
-          and a private-debt capital-partner program for real-estate-secured mortgage notes. Both are
+          Private Note Capital combines two things real-estate investors need in one place: Florida foreclosure auction research,
+          California publicly offered real-estate listings, and a private-debt
+          capital-partner program for real-estate-secured mortgage notes. These services are
           operated by {COMPANY.legalName}.
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Card className="p-5">
-            <p className="font-serif text-lg font-semibold text-navy">Foreclosure &amp; auction</p>
+            <p className="font-serif text-lg font-semibold text-navy">Florida foreclosure &amp; auction</p>
             <p className="mt-1 text-sm text-navy-muted">
               Search opportunities, track auctions, and request acquisition financing.
             </p>
             <Link href="/search" className="mt-3 inline-block text-sm font-semibold text-accent hover:underline">Search properties →</Link>
+          </Card>
+          <Card className="p-5">
+            <p className="font-serif text-lg font-semibold text-navy">California investor listings</p>
+            <p className="mt-1 text-sm text-navy-muted">
+              Browse active public CRM brokerage sale listings, separate from foreclosure
+              auctions and private PropertyRadar research records.
+            </p>
+            <Link href="/california/investor-opportunities" className="mt-3 inline-block text-sm font-semibold text-accent hover:underline">
+              Explore California listings →
+            </Link>
           </Card>
           <Card className="p-5">
             <p className="font-serif text-lg font-semibold text-navy">Private debt</p>
