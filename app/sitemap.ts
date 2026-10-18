@@ -16,6 +16,7 @@ const ROUTES = [
   "/company",
   "/about-data",
   "/guides/foreclosure-auction-due-diligence",
+  "/resources/official-foreclosure-auctions",
   "/privacy",
   "/terms",
   "/contact",
