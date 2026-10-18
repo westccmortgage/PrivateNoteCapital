@@ -18,6 +18,7 @@ export const serverEnv = {
   grcrmWebhookUrl:
     process.env.GRCRM_LEAD_WEBHOOK_URL || process.env.GRCRM_WEBHOOK_URL || "",
   grcrmWebhookSecret: process.env.GRCRM_WEBHOOK_SECRET || "",
+  grcrmWebhookToken: process.env.GRCRM_LEAD_WEBHOOK_TOKEN || "",
 
   // --- County collectors (Palm Beach + Los Angeles). All server-only. ---------
   // These read process.env at ACCESS time (getters) so a config change takes

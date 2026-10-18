@@ -13,6 +13,7 @@
 
 import crypto from "node:crypto";
 import { serverEnv } from "@/lib/env.server";
+import { parseGrcrmConnection } from "@/lib/grcrm-connection";
 import { formatMoney } from "@/lib/format";
 import { labelFor, FINANCING_TYPES, FORECLOSURE_STAGES } from "@/lib/constants";
 
@@ -244,18 +245,18 @@ export function classifyError(err: unknown): DeliveryState {
   return err instanceof Error && err.name === "AbortError" ? "sending_unknown" : "retry_pending";
 }
 
-const GRCRM_TIMEOUT_MS = 8_000;
+const GRCRM_TIMEOUT_MS = 20_000;
 
 /**
  * Forward a lead to the GRCRM lead-inbound webhook. Best-effort; never throws.
- * The token is embedded in serverEnv.grcrmWebhookUrl (?token=…) — the verified
- * receiver's credential. Returns an explicit DeliveryState so the caller can
- * persist it and never report "success" merely because the request was sent.
+ * GRCRM authenticates with x-lead-token; any legacy ?token in the configured
+ * URL is removed before fetch so it is never exposed in the CDN request logs.
+ * Returns an explicit DeliveryState so callers can store delivery outcomes.
  */
 export async function sendToGRCRM(lead: CrmLead): Promise<CrmResult> {
   const eventId = eventIdFor(lead);
-  const url = serverEnv.grcrmWebhookUrl;
-  if (!url) {
+  const connection = parseGrcrmConnection(serverEnv.grcrmWebhookUrl, serverEnv.grcrmWebhookToken);
+  if (!connection) {
     console.log(`[grcrm] webhook not configured; lead stored locally (action=${lead.actionType}).`);
     return { configured: false, sent: false, state: "not_configured", eventId, message: "GRCRM not configured (lead stored locally)." };
   }
@@ -264,10 +265,11 @@ export async function sendToGRCRM(lead: CrmLead): Promise<CrmResult> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "X-PNC-Source": "PrivateNoteCapital.com",
+    "X-Lead-Token": connection.token,
     // Idempotency hint for any future receiver support (current receiver ignores it).
     "X-PNC-Event-Id": eventId,
   };
-  // The verified receiver authenticates by the URL token, NOT HMAC. We still send
+  // The verified receiver authenticates by x-lead-token, NOT HMAC. We still send
   // a signature when a secret is configured (harmless, forward-compatible).
   if (serverEnv.grcrmWebhookSecret) {
     const sig = crypto.createHmac("sha256", serverEnv.grcrmWebhookSecret).update(body).digest("hex");
@@ -277,7 +279,7 @@ export async function sendToGRCRM(lead: CrmLead): Promise<CrmResult> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), GRCRM_TIMEOUT_MS);
   try {
-    const res = await fetch(url, { method: "POST", headers, body, signal: controller.signal });
+    const res = await fetch(connection.endpointUrl, { method: "POST", headers, body, signal: controller.signal });
     const state = classifyStatus(res.status);
     return {
       configured: true,
