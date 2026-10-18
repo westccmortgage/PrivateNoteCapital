@@ -41,6 +41,11 @@ export interface LeadOutcome {
   emailed: boolean;
 }
 
+/** A submission is acknowledged only if at least one durable or delivered channel succeeded. */
+export function leadAccepted(outcome: LeadOutcome): boolean {
+  return outcome.stored || outcome.crmForwarded || outcome.emailed;
+}
+
 export async function recordInterest(rec: InterestRecord): Promise<LeadOutcome> {
   const nowIso = new Date().toISOString();
   const admin = getAdminSupabase();
