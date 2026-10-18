@@ -30,6 +30,12 @@ export async function POST(request: Request) {
 
   const { ok, errors, value } = validateWatchlist(body);
   if (!ok) return NextResponse.json({ error: "Validation failed", errors }, { status: 400 });
+  if (value.state && value.state !== "FL") {
+    return NextResponse.json(
+      { error: "Florida auction watchlists only; visit the separate California Investor Listings section." },
+      { status: 400 },
+    );
+  }
 
   const user = await getCurrentUser();
   const nowIso = new Date().toISOString();
@@ -45,7 +51,7 @@ export async function POST(request: Request) {
       first_name: value.firstName || null,
       last_name: value.lastName || null,
       phone: value.phone || null,
-      state: value.state || null,
+      state: "FL",
       counties: value.counties,
       property_types: value.propertyTypes,
       minimum_price: value.minPrice,
@@ -70,7 +76,7 @@ export async function POST(request: Request) {
     lastName: value.lastName,
     email: value.email,
     phone: value.phone,
-    state: value.state,
+    state: "FL",
     investorExperience: value.investorExperience,
     notes: `Watchlist: counties=${value.counties.join("|") || "any"}; types=${value.propertyTypes.join("|") || "any"}; horizon=${value.auctionHorizon || "—"}`,
     sourceDetail: "weekly watchlist",
