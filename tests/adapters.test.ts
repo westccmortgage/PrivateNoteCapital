@@ -27,3 +27,17 @@ test("every adapter defines external_id and source_url mappings", () => {
     assert.ok(a.defaultColumnMap.source_url, `${a.id} maps source_url`);
   }
 });
+
+test("unverified CSV and county feeds do not automatically publish", () => {
+  for (const id of ["manual_csv", "california_foreclosure", "propertyradar", "palm_beach_clerk", "broward_clerk", "miami_dade_clerk"]) {
+    const adapter = getAdapter(id);
+    assert.ok(adapter, `${id}: source exists`);
+    assert.equal(adapter.publicDisplayAllowed, false, `${id} requires verified distribution rights`);
+  }
+});
+
+test("tax assessment never silently populates estimated market value in Florida source maps", () => {
+  for (const id of ["palm_beach_clerk", "broward_clerk", "miami_dade_clerk"]) {
+    assert.notEqual(getAdapter(id)?.defaultColumnMap.estimated_value, "AssessedValue");
+  }
+});
