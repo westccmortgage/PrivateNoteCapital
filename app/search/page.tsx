@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Shell } from "@/components/ui";
+import { Shell, Button } from "@/components/ui";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { PropertyCard } from "@/components/search/PropertyCard";
 import { Pagination } from "@/components/search/Pagination";
@@ -51,11 +51,21 @@ export default async function SearchPage({
             </>
           ) : (
             <EmptyState title="No matching properties">
-              {result.configured ? (
-                <>Try widening your filters — remove a county, extend the auction date range, or clear the price limits.</>
-              ) : (
-                <>No approved data is loaded yet. Listings only ever come from real imported sources — nothing here is fabricated.</>
-              )}
+              <div className="space-y-3">
+                <p>
+                  No matching, approved property records are currently published in our database.
+                  Auction calendars may still have sales that are not imported here.
+                </p>
+                {filter.state === "FL" || !filter.state ? (
+                  <Button href="/florida/foreclosure-auctions" size="sm" variant="ghost">
+                    Browse official Florida County Clerk calendars
+                  </Button>
+                ) : (
+                  <Button href="/resources/official-foreclosure-auctions" size="sm" variant="ghost">
+                    View official source resources
+                  </Button>
+                )}
+              </div>
             </EmptyState>
           )}
         </div>
