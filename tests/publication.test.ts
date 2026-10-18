@@ -57,8 +57,8 @@ test("restricted sources import as draft (never auto-published)", () => {
   // The import route sets status = adapter.publicDisplayAllowed ? 'published' : 'draft'.
   const statusFor = (id: string) => (getAdapter(id)!.publicDisplayAllowed ? "published" : "draft");
   assert.equal(statusFor("propertyradar"), "draft"); // restricted → draft, private
-  assert.equal(statusFor("manual_csv"), "published"); // operator-permitted
-  assert.equal(statusFor("broward_clerk"), "published"); // public record
+  assert.equal(statusFor("manual_csv"), "draft"); // operator-provided is not proof of display rights
+  assert.equal(statusFor("broward_clerk"), "draft"); // public record access is not a redistribution license
 });
 
 test("every restricted adapter is flagged not-public-display", () => {

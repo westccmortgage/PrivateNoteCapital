@@ -24,7 +24,16 @@ export async function POST(request: Request) {
   if (action === "publish_eligible") {
     if (!admin) return NextResponse.json({ error: "Database not configured." }, { status: 503 });
     const src = String(form.get("source") || "");
-    // Publish drafts that have the minimum publishable identity + active state.
+    const adapter = getAdapter(src);
+    // A published source must be explicitly approved in the registry.
+    // This also prevents accidentally publishing restricted PropertyRadar imports.
+    if (!adapter || !adapter.publicDisplayAllowed) {
+      return NextResponse.json(
+        { error: "This source is not approved for public display. Confirm the applicable data rights before publishing." },
+        { status: 403 },
+      );
+    }
+    // Publish drafts only for an approved, specifically identified source.
     const { data, error } = await admin
       .from("foreclosure_properties")
       .update({ record_status: "published" })

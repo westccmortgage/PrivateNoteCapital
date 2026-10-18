@@ -44,6 +44,9 @@ function pbRecord(over: Record<string, string> = {}): Record<string, string> {
   };
 }
 
+// Tests that explicitly exercise public posting use the simulated grant of
+// publication rights. Production must have its own separately reviewed grant.
+process.env.PBC_PUBLICATION_ALLOWED = "true";
 const provider = new PalmBeachForeclosureProvider();
 
 // 1. Connection test hits the official parcel service + authorized report.
@@ -194,6 +197,18 @@ test("PB: discoverEvents parses the authorized JSON report", async () => {
   assert.equal(d.configured, true);
   assert.equal(d.records.length, 2);
   setEnv({ PBC_AUCTION_REPORT_URL: undefined, PBC_AUCTION_SOURCE_TYPE: undefined });
+});
+
+test("PB: event publication is draft when publication approval is absent", () => {
+  const saved = process.env.PBC_PUBLICATION_ALLOWED;
+  delete process.env.PBC_PUBLICATION_ALLOWED;
+  try {
+    const e = provider.normalizeEvent(pbRecord());
+    assert.equal(e?.property.record_status, "draft");
+  } finally {
+    if (saved === undefined) delete process.env.PBC_PUBLICATION_ALLOWED;
+    else process.env.PBC_PUBLICATION_ALLOWED = saved;
+  }
 });
 
 // 13. Event sync disabled until an authorized source is configured (no fabrication).
