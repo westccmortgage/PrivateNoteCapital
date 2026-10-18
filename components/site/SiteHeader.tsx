@@ -10,8 +10,7 @@ import { SITE } from "@/lib/site";
 // and are reachable from the homepage + footer to keep the header uncluttered.
 const NAV = [
   { href: "/florida/foreclosure-auctions", label: "Florida Auctions" },
-  { href: "/search", label: "Search" },
-  { href: "/calendar", label: "Calendar" },
+  { href: "/california/investor-opportunities", label: "California Listings" },
   { href: "/financing", label: "Financing" },
   { href: "/private-debt", label: "Private Debt" },
   { href: "/company", label: "About" },
@@ -22,6 +21,8 @@ const NAV = [
 const MOBILE_EXTRA = [
   { href: "/watchlist", label: "Weekly Watchlist" },
   { href: "/saved", label: "Saved Properties" },
+  { href: "/search", label: "Florida Foreclosure Search" },
+  { href: "/calendar", label: "Florida Auction Calendar" },
   { href: "/resources/official-foreclosure-auctions", label: "Official Auction Sources" },
 ];
 
