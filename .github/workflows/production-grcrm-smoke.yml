@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/production-grcrm-smoke.yml"
+      - "lib/crm.ts"
   workflow_dispatch:
 
 permissions:
@@ -23,8 +24,11 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 15); do
             code=$(curl -sS -L --max-time 25 -o /tmp/pnc-florida.html -w '%{http_code}' "https://privatenotecapital.com/florida/foreclosure-auctions" || true)
-            if [ "$code" = "200" ] && grep -q "Palm Beach" /tmp/pnc-florida.html; then
-              echo "Florida official county hub responds HTTP 200."
+            marker_code=$(curl -sS -L --max-time 25 -o /tmp/pnc-intake-version.txt -w '%{http_code}' "https://privatenotecapital.com/.well-known/pnc-intake-version.txt" || true)
+            if [ "$code" = "200" ] && grep -q "Palm Beach" /tmp/pnc-florida.html \
+               && [ "$marker_code" = "200" ] \
+               && grep -q "grcrm-header-2026-10-18-v2" /tmp/pnc-intake-version.txt; then
+              echo "Live Florida hub and GRCRM v2 deployment marker verified."
               exit 0
             fi
             sleep 8
