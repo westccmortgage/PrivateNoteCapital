@@ -6,6 +6,7 @@ import { COMPANY } from "@/lib/company";
 // primary nav), not a separate site.
 const FOOTER_LINKS = [
   { href: "/florida/foreclosure-auctions", label: "Florida Auctions" },
+  { href: "/california/investor-opportunities", label: "California Listings" },
   { href: "/search", label: "Search" },
   { href: "/private-debt", label: "Private Debt" },
   { href: "/company", label: "About" },
@@ -24,7 +25,7 @@ export function SiteFooter() {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-sm">
             <p className="font-serif text-base font-semibold text-navy">{SITE.name}</p>
-            <p className="mt-1 text-sm text-navy-muted">{SITE.tagline} — California &amp; Florida.</p>
+            <p className="mt-1 text-sm text-navy-muted">{SITE.tagline} — Florida auctions &amp; California listings.</p>
             <p className="mt-3 text-xs text-navy-muted">
               Operated by {COMPANY.legalName} · NMLS #{COMPANY.nmls} · CA DRE Corporation License #{COMPANY.dreCorporationLicense}
             </p>
