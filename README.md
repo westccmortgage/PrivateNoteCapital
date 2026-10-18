@@ -3,11 +3,11 @@
 **One repository · one app · one `main` branch · one Netlify site · one domain
 (`privatenotecapital.com`).** Operated by West Coast Capital Mortgage Inc. (NMLS 2817729).
 
-Two products, one codebase and shell:
+Three distinct discovery/capital offerings, one codebase and shell:
 
-1. **Foreclosure & Auction Intelligence** (primary) — search California & Florida foreclosure
-   and auction opportunities; track auctions; save properties; request acquisition financing.
-2. **Private Debt** (`/private-debt`) — a capital-partner program for conservatively
+1. **Florida Foreclosure & Auction Intelligence** — search Florida foreclosure/auction opportunities, track verified auctions, save properties and request acquisition financing.
+2. **California Investor Property Listings** (`/california/investor-opportunities`) — previously authorized public CRM brokerage sale listings only; never private PropertyRadar research records or foreclosure auctions.
+3. **Private Debt** (`/private-debt`) — a capital-partner program for conservatively
    underwritten, real-estate-secured California trust deeds. *Not an offer of securities.*
 
 ## Stack
@@ -23,7 +23,11 @@ Netlify (`@netlify/plugin-nextjs` v5). Node 20. Production `npm audit`: 0 vulner
 · `/admin/import`. API: `/api/search`, `/api/financing`, `/api/watchlist`, `/api/saved`,
 `/api/private-debt`, `/api/contact`, `/api/admin/import`.
 
-## One GRCRM integration
+## GRCRM integrations
+
+Public California listings are read live from GRCRM's intentionally published `west-coast-capital-realty` marketplace feed, not from private contacts or PropertyRadar research datasets. The separate lead-webhook path below sends inquiries back to GRCRM.
+
+## One GRCRM lead intake route
 
 Every inquiry type (financing, property, watchlist, contact, private-debt investor,
 consultation) flows through **one** path — `lib/crm.ts` + `lib/lead.ts` → the verified GRCRM

@@ -17,8 +17,10 @@ import { ADAPTERS } from "@/lib/adapters";
 // Source dropdown: the automatic county collectors first, then CSV/import
 // profiles. De-duplicated by value.
 const SOURCE_OPTIONS = [
-  ...COLLECTOR_SOURCES.map((s) => ({ value: s.value, label: s.label })),
-  ...ADAPTERS.map((a) => ({ value: a.id, label: a.label })),
+  ...COLLECTOR_SOURCES.filter((s) => s.value === "palm_beach_county")
+    .map((s) => ({ value: s.value, label: s.label })),
+  ...ADAPTERS.filter((a) => a.state === "FL")
+    .map((a) => ({ value: a.id, label: a.label })),
 ];
 import { toQueryString, type SearchFilter } from "@/lib/search";
 
@@ -61,7 +63,6 @@ export function FilterPanel({ filter }: { filter: SearchFilter }) {
       <div className="grid grid-cols-2 gap-3">
         <Field label="State">
           <select className={inputCls} value={f.state ?? ""} onChange={(e) => set("state", (e.target.value || undefined) as SearchFilter["state"])}>
-            <option value="">All</option>
             {SUPPORTED_STATES.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
           </select>
         </Field>

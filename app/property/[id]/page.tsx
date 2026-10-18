@@ -26,6 +26,7 @@ async function fetchProperty(id: string): Promise<{ p: ForeclosureProperty | nul
     .select("*")
     .eq("id", id)
     .eq("record_status", "published")
+    .eq("state", "FL")
     .maybeSingle();
   if (!p) return { p: null, events: [] };
   const { data: events } = await supabase

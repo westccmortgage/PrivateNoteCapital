@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 const POINTS: [string, string][] = [
+  ["Different products", "The Florida foreclosure search and California public property listings are separate. California brokerage listings come from a public CRM feed deliberately published by their listing owners; confidential research records and PropertyRadar marketing leads are not displayed as auction listings."],
   ["Where records originate", "Property and auction records are compiled from approved data sources: county public records, permitted county foreclosure-sale exports, and licensed data partners. Every property page names its source and shows when it was last updated."],
   ["Records change", "Foreclosure and auction data is a moving target. Filings are updated, corrected, and withdrawn. A record accurate today may be stale tomorrow."],
   ["Auctions can be postponed or cancelled", "Auction dates are frequently postponed, rescheduled, or cancelled — sometimes the day of sale. Opening bids can change. Always confirm with the official source before acting."],

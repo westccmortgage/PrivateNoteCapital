@@ -49,8 +49,10 @@ interface CommitResult {
   richFieldsWritten: boolean;
 }
 
+const FL_ADAPTERS = ADAPTERS.filter((a) => a.state === "FL" || a.id === "manual_csv");
+
 export function ImportWizard() {
-  const [source, setSource] = useState(ADAPTERS[0].id);
+  const [source, setSource] = useState(FL_ADAPTERS[0].id);
   const [file, setFile] = useState<File | null>(null);
   const [columnMap, setColumnMap] = useState("");
   const [withdrawStale, setWithdrawStale] = useState(false);
@@ -60,7 +62,7 @@ export function ImportWizard() {
   const [err, setErr] = useState<string | null>(null);
   const [publishMsg, setPublishMsg] = useState<string | null>(null);
 
-  const adapter = ADAPTERS.find((a) => a.id === source)!;
+  const adapter = FL_ADAPTERS.find((a) => a.id === source)!;
 
   async function call(action: "validate" | "commit") {
     if (!file) {
@@ -132,7 +134,7 @@ export function ImportWizard() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Source profile">
             <select className={inputCls} value={source} onChange={(e) => { setSource(e.target.value); setValidation(null); setCommit(null); }}>
-              {ADAPTERS.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
+              {FL_ADAPTERS.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
             </select>
           </Field>
           <Field label="CSV file">

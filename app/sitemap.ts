@@ -7,6 +7,7 @@ const ROUTES = [
   "",
   "/search",
   "/florida/foreclosure-auctions",
+  "/california/investor-opportunities",
   "/calendar",
   "/watchlist",
   "/financing",

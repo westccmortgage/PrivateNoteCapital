@@ -1,0 +1,51 @@
+name: California public CRM listing feed smoke
+
+on:
+  pull_request:
+    paths:
+      - "lib/california-listings.ts"
+      - "app/california/investor-opportunities/page.tsx"
+  push:
+    branches: [main]
+    paths:
+      - "lib/california-listings.ts"
+      - "app/california/investor-opportunities/page.tsx"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check only public CRM marketplace feed (no private data)
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://grcrm.com/.netlify/functions/marketplace-public-feed?marketplace=west-coast-capital-realty&limit=100"
+          code=$(curl --silent --show-error --max-time 50 -L \
+            --output /tmp/ca-public-feed.json --write-out '%{http_code}' "$URL")
+          echo "GRCRM public listing feed HTTP: $code"
+          test "$code" = "200"
+          jq -e '.ok == true and .marketplace == "west-coast-capital-realty" and (.listings | type == "array")' /tmp/ca-public-feed.json > /dev/null
+          count=$(jq '[.listings[] | select(.state == "CA" and .purpose == "Sale" and .status == "Active")] | length' /tmp/ca-public-feed.json)
+          echo "Visible active California sale listings in public CRM feed: $count"
+          test "$count" -gt 0
+      - name: Verify California listing page after production deploy
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 18); do
+            code=$(curl -sS -L --max-time 25 -o /tmp/ca-investor-page.html -w '%{http_code}' \
+              "https://privatenotecapital.com/california/investor-opportunities" || true)
+            if [ "$code" = "200" ] && grep -q "California investor property listings" /tmp/ca-investor-page.html; then
+              echo "California investor listings page is live."
+              exit 0
+            fi
+            sleep 8
+          done
+          echo "::error::California investor listings page did not become live."
+          exit 1

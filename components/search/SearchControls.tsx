@@ -15,7 +15,7 @@ import { toQueryString } from "@/lib/search";
 // Primary hero search. Builds a shareable /search URL from the controls.
 export function SearchControls({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
-  const [state, setState] = useState("");
+  const [state, setState] = useState("FL");
   const [county, setCounty] = useState("");
   const [cityZip, setCityZip] = useState("");
   const [propertyType, setPropertyType] = useState("");
@@ -58,7 +58,6 @@ export function SearchControls({ compact = false }: { compact?: boolean }) {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Field label="State">
           <select className={inputCls} value={state} onChange={(e) => { setState(e.target.value); setCounty(""); }}>
-            <option value="">All states</option>
             {SUPPORTED_STATES.map((s) => (
               <option key={s.code} value={s.code}>{s.name}</option>
             ))}
@@ -73,7 +72,7 @@ export function SearchControls({ compact = false }: { compact?: boolean }) {
           </select>
         </Field>
         <Field label="City or ZIP">
-          <input className={inputCls} value={cityZip} onChange={(e) => setCityZip(e.target.value)} placeholder="e.g. Riverside or 33301" />
+          <input className={inputCls} value={cityZip} onChange={(e) => setCityZip(e.target.value)} placeholder="e.g. Fort Lauderdale or 33301" />
         </Field>
         <Field label="Property type">
           <select className={inputCls} value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>

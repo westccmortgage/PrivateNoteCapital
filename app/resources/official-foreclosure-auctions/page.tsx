@@ -3,9 +3,9 @@ import Link from "next/link";
 import { Section, Kicker, H2, Card } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "Official Foreclosure Auction & Court Record Resources",
+  title: "Florida Official Foreclosure Auction Resources",
   description:
-    "Find official Florida county foreclosure auction information and California court and recorder resources. Verify every sale directly with the responsible authority.",
+    "Find official Florida county foreclosure auction resources. Verify each sale directly with the responsible county Clerk.",
   alternates: { canonical: "/resources/official-foreclosure-auctions" },
 };
 
@@ -28,30 +28,6 @@ const florida: Resource[] = [
     url: "https://www.miamidadeclerk.gov/clerk/mortgage-foreclosures.page",
     description:
       "Official mortgage foreclosure guidance, auction access, court records and title-search precautions.",
-  },
-];
-
-const california: Resource[] = [
-  {
-    name: "California Courts — Nonjudicial Foreclosure",
-    url: "https://selfhelp.courts.ca.gov/nonjudicial-foreclosures",
-    description:
-      "State court explanation of notices, trustee sales and the nonjudicial foreclosure process.",
-    note: "Educational procedure guidance; not a live auction list.",
-  },
-  {
-    name: "Los Angeles County Recorder — Real Estate Records",
-    url: "https://www.lavote.gov/home/recorder/real-estate-records/general-info",
-    description:
-      "How to search and request recorded documents, including available in-person and records-request channels.",
-    note: "The County says its real estate record indexes are not available for online public searching.",
-  },
-  {
-    name: "California Attorney General — Reported Residential Foreclosure Sales",
-    url: "https://oag.ca.gov/residential-foreclosure-sales",
-    description:
-      "Reported residential foreclosure sales made to specified eligible bidders under California Civil Code § 2924m.",
-    note: "Retrospective sale reports; NOT an upcoming auction calendar. Some details may be redacted.",
   },
 ];
 
@@ -78,9 +54,9 @@ export default function OfficialForeclosureResources() {
     <>
       <Section className="pt-12 sm:pt-16">
         <div className="max-w-3xl">
-          <Kicker>Research resources · California &amp; Florida</Kicker>
+          <Kicker>Official Florida auction resources</Kicker>
           <h1 className="font-serif text-3xl font-semibold leading-tight text-navy sm:text-4xl">
-            Official foreclosure auction and court-record sources
+            Official Florida foreclosure auction resources
           </h1>
           <p className="mt-4 text-lg text-navy-muted">
             Verify current auction dates and legal documents with the responsible county clerk,
@@ -100,11 +76,6 @@ export default function OfficialForeclosureResources() {
         <ResourceCards items={florida} />
       </Section>
 
-      <Section className="py-8">
-        <Kicker>California · primarily nonjudicial foreclosure</Kicker>
-        <H2>State guidance and recorded-document resources</H2>
-        <ResourceCards items={california} />
-      </Section>
 
       <Section className="py-8">
         <Card className="p-6">

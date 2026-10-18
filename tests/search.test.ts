@@ -4,16 +4,16 @@ import { parseSearchParams, toQueryString, classesToTypes } from "@/lib/search";
 
 test("parseSearchParams: defaults", () => {
   const f = parseSearchParams({});
-  assert.equal(f.state, undefined);
+  assert.equal(f.state, "FL");
   assert.equal(f.sort, "auction_date");
   assert.equal(f.page, 1);
   assert.deepEqual(f.propertyTypes, []);
 });
 
 test("parseSearchParams: normalizes state and rejects unsupported", () => {
-  assert.equal(parseSearchParams({ state: "ca" }).state, "CA");
+  assert.equal(parseSearchParams({ state: "ca" }).state, "FL");
   assert.equal(parseSearchParams({ state: "fl" }).state, "FL");
-  assert.equal(parseSearchParams({ state: "TX" }).state, undefined);
+  assert.equal(parseSearchParams({ state: "TX" }).state, "FL");
 });
 
 test("parseSearchParams: multi-value + numeric coercion", () => {
@@ -51,8 +51,8 @@ test("toQueryString: round-trips through parseSearchParams", () => {
 });
 
 test("toQueryString: omits defaults (sort=auction_date, page=1)", () => {
-  const qs = toQueryString({ state: "CA", sort: "auction_date", page: 1 });
-  assert.equal(qs, "state=CA");
+  const qs = toQueryString({ state: "FL", sort: "auction_date", page: 1 });
+  assert.equal(qs, "state=FL");
 });
 
 test("classesToTypes: expands coarse buckets", () => {
@@ -66,4 +66,9 @@ test("shareable URL example: state=FL&county=Broward parses", () => {
   const f = parseSearchParams({ state: "FL", county: "Broward", financing: "auction" });
   assert.equal(f.state, "FL");
   assert.equal(f.county, "Broward");
+});
+
+test("California cannot be serialized into Florida foreclosure search", () => {
+  assert.equal(toQueryString({ state: "CA" }), "");
+  assert.equal(parseSearchParams({ state: "CA", county: "Los Angeles" }).state, "FL");
 });

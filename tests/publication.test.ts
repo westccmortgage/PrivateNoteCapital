@@ -39,6 +39,10 @@ test("runSearch ALWAYS constrains to record_status = 'published'", async () => {
     (c) => c.method === "eq" && c.args[0] === "record_status" && c.args[1] === "published",
   );
   assert.ok(publishedEq, "search must filter record_status='published'");
+  const floridaEq = calls.find(
+    (c) => c.method === "eq" && c.args[0] === "state" && c.args[1] === "FL",
+  );
+  assert.ok(floridaEq, "every foreclosure search must constrain state to Florida");
   // And it must never query for draft/any other status.
   const badStatus = calls.find(
     (c) => c.method === "eq" && c.args[0] === "record_status" && c.args[1] !== "published",

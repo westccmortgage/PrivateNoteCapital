@@ -50,6 +50,12 @@ export async function POST(request: Request) {
   const sourceId = String(form.get("source") || "");
   const adapter = getAdapter(sourceId);
   if (!adapter) return NextResponse.json({ error: "Unknown source." }, { status: 400 });
+  if (adapter.state === "CA" && adapter.id !== "manual_csv") {
+    return NextResponse.json(
+      { error: "California investment research belongs in GRCRM, not the foreclosure importer." },
+      { status: 403 },
+    );
+  }
 
   const file = form.get("file");
   if (!(file instanceof File)) return NextResponse.json({ error: "No file uploaded." }, { status: 400 });
@@ -77,6 +83,12 @@ export async function POST(request: Request) {
     publicDisplayAllowed: adapter.publicDisplayAllowed,
     defaults: adapter.defaults,
   });
+  if (summary.valid.some((row) => row.state !== "FL")) {
+    return NextResponse.json(
+      { error: "Foreclosure imports accept Florida data only. California listings remain in GRCRM." },
+      { status: 422 },
+    );
+  }
   const publishable = summary.valid.filter((r) => r.record_status === "published").length;
   const draft = summary.valid.filter((r) => r.record_status === "draft").length;
   const archived = summary.valid.filter((r) => r.record_status === "archived").length;
