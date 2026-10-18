@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Shell, Button } from "@/components/ui";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { PropertyCard } from "@/components/search/PropertyCard";
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Search Properties",
-  description: "Search California & Florida foreclosure and auction opportunities.",
+  description: "Search Florida foreclosure and auction opportunities. California sale listings are in the separate investor directory.",
 };
 
 export default async function SearchPage({
@@ -19,14 +20,18 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const filter = parseSearchParams(await searchParams); // Next 15: searchParams is async
+  const raw = await searchParams;
+  if (String(Array.isArray(raw.state) ? raw.state[0] : raw.state || "").toUpperCase() === "CA") {
+    redirect("/california/investor-opportunities");
+  }
+  const filter = parseSearchParams(raw); // Florida foreclosure only
   const supabase = await getServerSupabase();
   const result = await runSearch(supabase, filter);
 
   return (
     <Shell className="py-8">
       <div className="mb-6">
-        <h1 className="font-serif text-2xl font-semibold text-navy sm:text-3xl">Search Properties</h1>
+        <h1 className="font-serif text-2xl font-semibold text-navy sm:text-3xl">Florida Foreclosure Search</h1>
         <p className="mt-1 text-sm text-navy-muted">
           {result.configured
             ? `${result.total.toLocaleString("en-US")} ${result.total === 1 ? "record" : "records"} matching your filters`
