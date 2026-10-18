@@ -139,10 +139,10 @@ test("PB: official parcel enrichment uses valid fields, no owner PII or inferred
   const where = req.searchParams.get("where") || "";
   assert.match(where, /PARID=/);
   assert.match(where, /PARCEL_NUMBER=/);
-  assert.doesNotMatch(where, /\\bPCN=|\\bPARCELNO=/);
+  assert.ok(!where.includes("PCN=") && !where.includes("PARCELNO="));
   const fields = req.searchParams.get("outFields") || "";
   assert.match(fields, /ASSESSED_VAL/);
-  assert.doesNotMatch(fields, /OWNER_NAME|\\*/);
+  assert.ok(!fields.includes("OWNER_NAME") && !fields.includes("*"));
   assert.equal(enriched.property.address, "123 Ocean Ave");
   assert.equal(enriched.property.assessed_value, 275000);
   assert.equal(enriched.property.estimated_value, null);
