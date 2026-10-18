@@ -9,6 +9,7 @@ const FOOTER_LINKS = [
   { href: "/private-debt", label: "Private Debt" },
   { href: "/company", label: "About" },
   { href: "/about-data", label: "About Data" },
+  { href: "/resources/official-foreclosure-auctions", label: "Official Auction Sources" },
   { href: "/watchlist", label: "Weekly Watchlist" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
