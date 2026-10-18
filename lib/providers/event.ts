@@ -114,12 +114,10 @@ export function buildProperty(i: EventPropertyInput): WritableProperty | null {
     publicDisplayAllowed: publicOk,
   });
 
-  // Assessed value may seed estimated_value ONLY as a labeled assessed figure —
-  // never presented as market value (the property page labels it as assessed).
-  const estimated_value = i.assessedValue ?? null;
-  const estimated_debt = i.judgmentAmount ?? null;
-  const estimated_equity =
-    estimated_value != null && estimated_debt != null ? estimated_value - estimated_debt : null;
+  // County assessed values and foreclosure judgment amounts are NOT reliable
+  // estimates of current market value, remaining loan balance or property equity.
+  // Preserve them in the separate assessed_value/judgment_amount columns below.
+  // Show no estimated value/debt/equity until a separately validated source exists.
 
   return {
     external_id,
@@ -140,9 +138,9 @@ export function buildProperty(i: EventPropertyInput): WritableProperty | null {
     original_auction_date: null,
     current_auction_date: coerceDate(i.saleDate),
     opening_bid: i.openingBid ?? null,
-    estimated_value,
-    estimated_debt,
-    estimated_equity,
+    estimated_value: null,
+    estimated_debt: null,
+    estimated_equity: null,
     occupancy_status: null,
     previous_sale_date: null,
     previous_sale_price: null,
