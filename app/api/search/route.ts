@@ -11,6 +11,12 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const raw: Record<string, string> = {};
   searchParams.forEach((v, k) => (raw[k] = v));
+  if (raw.state?.toUpperCase() === "CA") {
+    return NextResponse.json(
+      { error: "California properties are separate from foreclosure auctions.", url: "/california/investor-opportunities" },
+      { status: 400 },
+    );
+  }
   const filter = parseSearchParams(raw);
   const supabase = await getServerSupabase();
   const result = await runSearch(supabase, filter);
