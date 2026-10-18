@@ -114,7 +114,7 @@ export default function FloridaForeclosureAuctionsPage() {
             Share your target property, county, acquisition plan, equity contribution,
             intended use and required closing date. Every request is subject to
             eligibility and underwriting; submitting an inquiry is not a commitment
-            to lend and may not satisfy an auction's payment requirements.
+            to lend and may not satisfy the auction payment requirements.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Button href="/financing?type=auction_acquisition">Request acquisition review</Button>
