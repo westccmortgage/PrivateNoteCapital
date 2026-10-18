@@ -7,13 +7,12 @@ export const SITE = {
   shortName: "PrivateNoteCapital",
   domain: "privatenotecapital.com",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://privatenotecapital.com",
-  tagline: "Foreclosure & Auction Intelligence",
+  tagline: "Real Estate Investment Intelligence",
   description:
-    "Search California & Florida foreclosure and auction opportunities, and explore a private-debt capital-partner program — one platform from Private Note Capital.",
+    "Explore Florida foreclosure auctions, California sale listings and real-estate-secured private-capital reviews.",
 } as const;
 
 // States the platform covers in Phase 1.
 export const SUPPORTED_STATES = [
-  { code: "CA", name: "California" },
   { code: "FL", name: "Florida" },
 ] as const;
