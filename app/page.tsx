@@ -25,9 +25,9 @@ export default async function HomePage() {
       {/* Hero */}
       <Section className="pt-12 sm:pt-16">
         <div className="max-w-3xl">
-          <Kicker>California &amp; Florida</Kicker>
+          <Kicker>Florida foreclosure auctions</Kicker>
           <h1 className="font-serif text-3xl font-semibold leading-tight text-navy sm:text-4xl md:text-[44px]">
-            Search California &amp; Florida Foreclosure Opportunities
+            Search Florida Foreclosure Opportunities
           </h1>
           <p className="mt-4 text-lg text-navy-muted">
             Track upcoming auctions, review available property information, save
@@ -39,6 +39,7 @@ export default async function HomePage() {
         </div>
 
         <div className="mt-8">
+          <p className="mb-3 text-sm font-semibold text-navy">Florida auction search</p>
           <SearchControls />
         </div>
 
@@ -97,6 +98,26 @@ export default async function HomePage() {
               </p>
             </div>
             <Button href="/florida/foreclosure-auctions">Explore Florida auctions</Button>
+          </div>
+        </Card>
+      </Section>
+
+      <Section className="py-8">
+        <Card className="p-6 sm:p-8">
+          <Kicker>California · Investor property listings</Kicker>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <H2>California properties — separate from foreclosure auctions</H2>
+              <p className="mt-3 text-sm text-navy-muted">
+                Browse active California properties already offered through our public
+                brokerage CRM marketplace. Review original listings and request an
+                acquisition-financing conversation. Internal research records are not
+                shown as properties for sale or as foreclosure auction inventory.
+              </p>
+            </div>
+            <Button href="/california/investor-opportunities">
+              Explore California listings
+            </Button>
           </div>
         </Card>
       </Section>
