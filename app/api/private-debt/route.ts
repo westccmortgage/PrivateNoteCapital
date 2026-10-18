@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { validateInvestor, validateSimple, isBotSubmission } from "@/lib/validation";
-import { recordInterest } from "@/lib/lead";
+import { recordInterest, leadAccepted } from "@/lib/lead";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { getCurrentUser } from "@/lib/supabase/server";
 
@@ -56,6 +56,12 @@ export async function POST(request: Request) {
       sourceUrl,
       attribution,
     });
+    if (!leadAccepted(outcome)) {
+      return NextResponse.json(
+        { ok: false, error: "We could not receive your request. Please call (310) 654-1577." },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({
       ok: true,
       forwarded: outcome.crmForwarded,
@@ -82,6 +88,12 @@ export async function POST(request: Request) {
     consent: true,
     attribution,
   });
+  if (!leadAccepted(outcome)) {
+    return NextResponse.json(
+      { ok: false, error: "We could not receive your inquiry. Please call (310) 654-1577." },
+      { status: 503 },
+    );
+  }
   return NextResponse.json({
     ok: true,
     forwarded: outcome.crmForwarded,

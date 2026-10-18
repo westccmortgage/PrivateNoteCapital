@@ -15,6 +15,8 @@ const ROUTES = [
   "/private-debt/review",
   "/company",
   "/about-data",
+  "/guides/foreclosure-auction-due-diligence",
+  "/resources/official-foreclosure-auctions",
   "/privacy",
   "/terms",
   "/contact",

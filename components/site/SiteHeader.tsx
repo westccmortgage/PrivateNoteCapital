@@ -21,6 +21,7 @@ const NAV = [
 const MOBILE_EXTRA = [
   { href: "/watchlist", label: "Weekly Watchlist" },
   { href: "/saved", label: "Saved Properties" },
+  { href: "/resources/official-foreclosure-auctions", label: "Official Auction Sources" },
 ];
 
 export function SiteHeader() {

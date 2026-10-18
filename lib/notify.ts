@@ -24,7 +24,7 @@ async function viaResend(
   const key = process.env.RESEND_API_KEY;
   if (!key) return { sent: false, provider: "none" };
   const to = process.env.NOTIFY_EMAIL || COMPANY.email;
-  const from = process.env.NOTIFY_FROM || "CADeed <onboarding@resend.dev>";
+  const from = process.env.NOTIFY_FROM || "Private Note Capital <onboarding@resend.dev>";
   try {
     const body: Record<string, unknown> = { from, to, subject, text };
     if (replyTo) body.reply_to = replyTo;
@@ -55,7 +55,7 @@ async function viaWeb3Forms(
       body: JSON.stringify({
         access_key: key,
         subject,
-        from_name: "CADeed.com",
+        from_name: "PrivateNoteCapital.com",
         replyto: replyTo,
         message: text,
       }),

@@ -78,10 +78,32 @@ export default async function HomePage() {
             <div className="mt-4 flex flex-wrap gap-2">
               <Button href="/search" size="sm">Open search</Button>
               <Button href="/watchlist" variant="ghost" size="sm">Get weekly watchlist</Button>
+              <Button href="/resources/official-foreclosure-auctions" variant="ghost" size="sm">Browse official auction sources</Button>
             </div>
           </Card>
         </Section>
       )}
+
+      {/* A meaningful investor pathway while the opportunity feed is being built. */}
+      <Section className="py-8">
+        <Card className="p-6 sm:p-8">
+          <Kicker>Private note capital</Kicker>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <H2>Explore real-estate-secured private lending</H2>
+              <p className="mt-3 text-sm text-navy-muted">
+                Learn how our capital-partner process works, review the risks of private
+                mortgage notes, and request a conversation. Information requests are
+                not commitments to invest, and no returns are guaranteed.
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <Button href="/private-debt/investors">Capital partner inquiry</Button>
+              <Button href="/private-debt/faq" variant="ghost">Review risks and FAQs</Button>
+            </div>
+          </div>
+        </Card>
+      </Section>
 
       {/* Financing paths */}
       <Section id="financing" className="border-t border-hairline">
