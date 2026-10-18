@@ -237,6 +237,7 @@ export class PalmBeachForeclosureProvider implements CountyProvider {
     });
   }
 
+  /** Enrich from the official PARCEL_DETAILS layer. Limit fields to non-owner parcel facts. */
   async enrichProperty(event: NormalizedEvent, fetchImpl: FetchLike = realFetch): Promise<NormalizedEvent> {
     const service = serverEnv.palmBeach.parcelArcgisUrl;
     const pcn = event.property.apn ? normalizeApn(event.property.apn) : null;
@@ -248,10 +249,10 @@ export class PalmBeachForeclosureProvider implements CountyProvider {
       queryFeatures(
         service,
         {
-          where: `PCN='${arcgisEscape(pcn)}' OR PARID='${arcgisEscape(pcn)}' OR PARCELNO='${arcgisEscape(pcn)}'`,
-          outFields: "*",
+          where: `PARID='${arcgisEscape(pcn)}' OR PARCEL_NUMBER='${arcgisEscape(pcn)}'`,
+          outFields: "PARID,PARCEL_NUMBER,SITE_ADDR_STR,MUNICIPALITY,ZIP1,ASSESSED_VAL,ACRES",
           resultRecordCount: 1,
-          returnGeometry: true,
+          returnGeometry: false,
         },
         fetchImpl,
       ),
@@ -265,13 +266,11 @@ export class PalmBeachForeclosureProvider implements CountyProvider {
     const p = event.property;
     p.latitude = p.latitude ?? feat.geometry?.y ?? numAttr(a, "LATITUDE", "LAT", "Y");
     p.longitude = p.longitude ?? feat.geometry?.x ?? numAttr(a, "LONGITUDE", "LON", "X");
-    p.address = p.address ?? strAttr(a, "SITUS_ADDR", "SITEADDRESS", "SITUS", "PROP_ADDR");
-    p.city = p.city ?? strAttr(a, "SITUS_CITY", "CITY", "MUNI_NAME");
-    p.zip = p.zip ?? strAttr(a, "SITUS_ZIP", "ZIPCODE", "ZIP");
-    p.assessed_value = p.assessed_value ?? numAttr(a, "ASSD_VAL", "ASSESSEDVALUE", "TOT_VAL", "JV");
-    if (p.estimated_value == null && p.assessed_value != null) p.estimated_value = p.assessed_value;
+    p.address = p.address ?? strAttr(a, "SITE_ADDR_STR", "SITUS_ADDR", "SITEADDRESS", "SITUS", "PROP_ADDR");
+    p.city = p.city ?? strAttr(a, "MUNICIPALITY", "SITUS_CITY", "CITY", "MUNI_NAME");
+    p.zip = p.zip ?? strAttr(a, "ZIP1", "SITUS_ZIP", "ZIPCODE", "ZIP");
+    p.assessed_value = p.assessed_value ?? numAttr(a, "ASSESSED_VAL", "ASSD_VAL", "ASSESSEDVALUE", "TOT_VAL", "JV");
     p.lot_size = p.lot_size ?? numAttr(a, "ACRES", "LOTSIZE", "LAND_SF");
-    p.year_built = p.year_built ?? numAttr(a, "YEARBUILT", "YR_BLT", "ACT_YR_BLT");
     event.enrichment = { attempted: true, matched: true };
     return event;
   }
