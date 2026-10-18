@@ -5,6 +5,7 @@ import { COMPANY } from "@/lib/company";
 // One combined platform: Private Debt is a normal internal section (also in the
 // primary nav), not a separate site.
 const FOOTER_LINKS = [
+  { href: "/florida/foreclosure-auctions", label: "Florida Auctions" },
   { href: "/search", label: "Search" },
   { href: "/private-debt", label: "Private Debt" },
   { href: "/company", label: "About" },
