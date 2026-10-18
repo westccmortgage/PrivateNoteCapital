@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Shell, Section, Kicker, H2, Card } from "@/components/ui";
+import { Section, Kicker, H2, Card } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Foreclosure Auction Due Diligence Checklist",
@@ -37,7 +37,7 @@ const checks = [
 
 export default function AuctionDueDiligencePage() {
   return (
-    <Shell>
+    <>
       <Section className="pt-12 sm:pt-16">
         <div className="max-w-3xl">
           <Kicker>Investor education · California &amp; Florida</Kicker>
@@ -76,6 +76,6 @@ export default function AuctionDueDiligencePage() {
           </div>
         </div>
       </Section>
-    </Shell>
+    </>
   );
 }
