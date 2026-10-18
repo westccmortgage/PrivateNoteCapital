@@ -9,6 +9,7 @@ import { SITE } from "@/lib/site";
 // is a section of the same platform. Watchlist/Saved live in the mobile drawer
 // and are reachable from the homepage + footer to keep the header uncluttered.
 const NAV = [
+  { href: "/florida/foreclosure-auctions", label: "Florida Auctions" },
   { href: "/search", label: "Search" },
   { href: "/calendar", label: "Calendar" },
   { href: "/financing", label: "Financing" },
@@ -36,7 +37,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-6 lg:flex" aria-label="Primary">
+        <nav className="ml-auto hidden items-center gap-4 lg:flex" aria-label="Primary">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} className="text-sm text-navy-soft hover:text-navy">
               {n.label}

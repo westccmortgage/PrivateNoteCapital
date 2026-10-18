@@ -78,11 +78,28 @@ export default async function HomePage() {
             <div className="mt-4 flex flex-wrap gap-2">
               <Button href="/search" size="sm">Open search</Button>
               <Button href="/watchlist" variant="ghost" size="sm">Get weekly watchlist</Button>
-              <Button href="/resources/official-foreclosure-auctions" variant="ghost" size="sm">Browse official auction sources</Button>
+              <Button href="/florida/foreclosure-auctions" variant="ghost" size="sm">Florida county auction calendars</Button>
             </div>
           </Card>
         </Section>
       )}
+
+      <Section className="py-8">
+        <Card className="p-6 sm:p-8">
+          <Kicker>Florida foreclosure research</Kicker>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <H2>Official Florida auction calendars by county</H2>
+              <p className="mt-3 text-sm text-navy-muted">
+                Browse direct Clerk links for Palm Beach, Broward, Miami-Dade, Hillsborough,
+                Orange and Duval County. These are external official sources, not imported
+                listings or a claim that any particular sale is active.
+              </p>
+            </div>
+            <Button href="/florida/foreclosure-auctions">Explore Florida auctions</Button>
+          </div>
+        </Card>
+      </Section>
 
       {/* A meaningful investor pathway while the opportunity feed is being built. */}
       <Section className="py-8">

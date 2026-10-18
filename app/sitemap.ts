@@ -6,6 +6,7 @@ import { SITE } from "@/lib/site";
 const ROUTES = [
   "",
   "/search",
+  "/florida/foreclosure-auctions",
   "/calendar",
   "/watchlist",
   "/financing",
