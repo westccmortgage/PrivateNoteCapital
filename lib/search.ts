@@ -50,10 +50,9 @@ function num(v: string | string[] | undefined): number | undefined {
 
 /** Parse Next.js searchParams into a typed, validated filter. */
 export function parseSearchParams(params: RawParams): SearchFilter {
-  const state = first(params.state)?.toUpperCase();
   const pageRaw = num(params.page) ?? 1;
   return {
-    state: state === "CA" || state === "FL" ? state : undefined,
+    state: "FL",
     county: first(params.county) || undefined,
     city: first(params.city) || undefined,
     zip: first(params.zip) || undefined,
@@ -76,7 +75,7 @@ export function parseSearchParams(params: RawParams): SearchFilter {
 /** Serialize a filter back to a query string for shareable URLs. */
 export function toQueryString(f: Partial<SearchFilter>): string {
   const q = new URLSearchParams();
-  if (f.state) q.set("state", f.state);
+  if (f.state === "FL") q.set("state", "FL");
   if (f.county) q.set("county", f.county);
   if (f.city) q.set("city", f.city);
   if (f.zip) q.set("zip", f.zip);
@@ -132,7 +131,8 @@ export async function runSearch(
   let q = supabase
     .from("foreclosure_properties")
     .select("*", { count: "exact" })
-    .eq("record_status", "published");
+    .eq("record_status", "published")
+    .eq("state", "FL");
 
   if (f.state) q = q.eq("state", f.state);
   if (f.county) q = q.ilike("county", f.county);
