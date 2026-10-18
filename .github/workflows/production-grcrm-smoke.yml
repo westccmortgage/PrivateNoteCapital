@@ -1,0 +1,58 @@
+name: Production GRCRM integration smoke
+
+# The push path only matches when this QA workflow itself is created/updated.
+# Subsequent website pushes do not create dummy CRM contacts.
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/production-grcrm-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check public Florida hub is live
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 15); do
+            code=$(curl -sS -L --max-time 25 -o /tmp/pnc-florida.html -w '%{http_code}' "https://privatenotecapital.com/florida/foreclosure-auctions" || true)
+            if [ "$code" = "200" ] && grep -q "Palm Beach" /tmp/pnc-florida.html; then
+              echo "Florida official county hub responds HTTP 200."
+              exit 0
+            fi
+            sleep 8
+          done
+          echo "::error::Florida hub did not become live."
+          exit 1
+      - name: Send one clearly synthetic lead and verify receiver success
+        shell: bash
+        run: |
+          set -euo pipefail
+          payload=$(jq -n --arg run "$GITHUB_RUN_ID" '{
+            firstName:"PNC",
+            lastName:("QA Test " + $run),
+            email:("pnc-qa-" + $run + "@example.com"),
+            message:("QA TEST ONLY - DO NOT CONTACT OR MARKET. End-to-end production webhook verification from GitHub Actions run " + $run),
+            sourceUrl:"https://privatenotecapital.com/florida/foreclosure-auctions",
+            attribution:{utm_source:"pncinternal_qa"}
+          }')
+          code=$(curl --silent --show-error --max-time 45 --retry 0 \
+            -H 'Content-Type: application/json' \
+            -o /tmp/pnc-lead-response.json \
+            -w '%{http_code}' \
+            -X POST --data "$payload" \
+            "https://privatenotecapital.com/api/contact")
+          echo "Intake HTTP status: $code"
+          if [ "$code" != "200" ]; then
+            jq -c '{ok,forwarded,error}' /tmp/pnc-lead-response.json || true
+            exit 1
+          fi
+          jq -e '.ok == true and .forwarded == true' /tmp/pnc-lead-response.json >/dev/null
+          echo "Production intake accepted synthetic QA record and reported GRCRM forwarded=true."
