@@ -61,7 +61,6 @@ export function FilterPanel({ filter }: { filter: SearchFilter }) {
       <div className="grid grid-cols-2 gap-3">
         <Field label="State">
           <select className={inputCls} value={f.state ?? ""} onChange={(e) => set("state", (e.target.value || undefined) as SearchFilter["state"])}>
-            <option value="">All</option>
             {SUPPORTED_STATES.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
           </select>
         </Field>
