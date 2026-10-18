@@ -37,6 +37,7 @@ export async function POST(request: Request) {
   // Persist the subscription (service role). consented_at is set ONLY because the
   // user explicitly opted in (validation requires consent === true).
   const admin = getAdminSupabase();
+  let alertSaved = false;
   if (admin) {
     const { error } = await admin.from("search_alerts").insert({
       user_id: user?.id ?? null,
@@ -57,6 +58,7 @@ export async function POST(request: Request) {
       active: true,
     });
     if (error) console.error("[watchlist] insert error:", error.message);
+    else alertSaved = true;
   }
 
   // Forward as a lead so the team can follow up.
@@ -76,10 +78,17 @@ export async function POST(request: Request) {
     attribution: (body.attribution as Attribution) || {},
   });
 
+  if (!alertSaved) {
+    return NextResponse.json(
+      { ok: false, error: "We could not save your watchlist subscription. Please try again later." },
+      { status: 503 },
+    );
+  }
+
   return NextResponse.json({
     ok: true,
     forwarded: outcome.crmForwarded,
-    message: "You're subscribed. Your first weekly watchlist will arrive soon. You can unsubscribe anytime.",
+    message: "Your watchlist preferences were saved. Alerts depend on available, verified auction data; you can unsubscribe anytime.",
   });
 }
 
