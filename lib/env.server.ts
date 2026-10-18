@@ -40,7 +40,8 @@ export const serverEnv = {
       eventSourceUrl: process.env.PBC_AUCTION_REPORT_URL || "",
       eventSourceType: (process.env.PBC_AUCTION_SOURCE_TYPE || "csv").toLowerCase(), // csv | json
       eventSourceToken: process.env.PBC_AUCTION_REPORT_TOKEN || "", // ?token= or Bearer; never logged
-      publicationAllowed: (process.env.PBC_PUBLICATION_ALLOWED || "true").toLowerCase() !== "false",
+      // Explicit authorization required. Having a feed URL is not display permission.
+      publicationAllowed: (process.env.PBC_PUBLICATION_ALLOWED || "false").toLowerCase() === "true",
     };
   },
 
