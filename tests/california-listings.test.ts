@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { allProviders, getProvider } from "@/lib/providers/registry";
 import {
   publicCaliforniaListing,
   selectPublicCaliforniaListings,
@@ -75,4 +76,20 @@ test("California public listings consume published brokerage feed, not PropertyR
   assert.match(src, /marketplace-public-feed/);
   assert.match(src, /west-coast-capital-realty/);
   assert.doesNotMatch(src, /\.from\(["'](?:lead_universe|pr_properties|crm_contacts)["']/);
+});
+
+test("California foreclosure event provider is disabled", () => {
+  assert.equal(getProvider("la_county_recorder"), undefined);
+  assert.ok(allProviders().every((provider) => provider.state === "FL"));
+});
+
+test("California rows are refused by the foreclosure importer even as drafts", () => {
+  const route = readFileSync("app/api/admin/import/route.ts", "utf8");
+  assert.match(route, /adapter.state === "CA"/);
+  assert.match(route, /row.state !== "FL"/);
+});
+
+test("Florida-only route protects direct property-detail reads", () => {
+  const source = readFileSync("app/property/[id]/page.tsx", "utf8");
+  assert.match(source, /\.eq\("state", "FL"\)/);
 });
