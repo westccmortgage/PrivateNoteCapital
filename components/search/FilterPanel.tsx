@@ -17,8 +17,10 @@ import { ADAPTERS } from "@/lib/adapters";
 // Source dropdown: the automatic county collectors first, then CSV/import
 // profiles. De-duplicated by value.
 const SOURCE_OPTIONS = [
-  ...COLLECTOR_SOURCES.map((s) => ({ value: s.value, label: s.label })),
-  ...ADAPTERS.map((a) => ({ value: a.id, label: a.label })),
+  ...COLLECTOR_SOURCES.filter((s) => s.value === "palm_beach_county")
+    .map((s) => ({ value: s.value, label: s.label })),
+  ...ADAPTERS.filter((a) => a.state === "FL")
+    .map((a) => ({ value: a.id, label: a.label })),
 ];
 import { toQueryString, type SearchFilter } from "@/lib/search";
 
