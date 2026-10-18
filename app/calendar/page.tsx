@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Auction Calendar",
-  description: "Upcoming California & Florida foreclosure auctions by date.",
+  description: "Upcoming Florida foreclosure auctions by date.",
 };
 
 export default async function CalendarPage() {
@@ -22,6 +22,7 @@ export default async function CalendarPage() {
       .from("foreclosure_properties")
       .select("*")
       .eq("record_status", "published")
+      .eq("state", "FL")
       .gte("current_auction_date", today)
       .order("current_auction_date", { ascending: true })
       .limit(200);
@@ -40,7 +41,7 @@ export default async function CalendarPage() {
     <Shell className="py-8">
       <h1 className="font-serif text-2xl font-semibold text-navy sm:text-3xl">Auction Calendar</h1>
       <p className="mt-1 text-sm text-navy-muted">
-        Upcoming auctions by date. Dates can be postponed or cancelled — always verify with the official source.
+        Florida auctions by date. Dates can be postponed or cancelled — always verify with the official source.
       </p>
 
       <div className="mt-6 flex flex-col gap-6">
