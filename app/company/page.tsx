@@ -16,7 +16,7 @@ export default function CompanyPage() {
         <Kicker>About</Kicker>
         <h1 className="font-serif text-3xl font-semibold text-navy">One platform, operated by {COMPANY.shortName}</h1>
         <p className="mt-3 text-navy-muted">
-          Private Note Capital combines two things real-estate investors need in one place: Florida foreclosure auction research,
+          Private Note Capital brings together three distinct research and financing services: Florida foreclosure auction research,
           California publicly offered real-estate listings, and a private-debt
           capital-partner program for real-estate-secured mortgage notes. These services are
           operated by {COMPANY.legalName}.
