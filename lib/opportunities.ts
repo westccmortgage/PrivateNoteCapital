@@ -25,7 +25,7 @@ export async function getHomeSections(): Promise<OpportunitySection[]> {
   if (!supabase) return [];
 
   const base = () =>
-    supabase.from("foreclosure_properties").select("*").eq("record_status", "published");
+    supabase.from("foreclosure_properties").select("*").eq("record_status", "published").eq("state", "FL");
 
   const [upcoming, fresh, postponed, reo, highEquity] = await Promise.all([
     base().gte("current_auction_date", today()).order("current_auction_date", { ascending: true }).limit(LIMIT),
