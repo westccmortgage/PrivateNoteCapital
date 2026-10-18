@@ -113,19 +113,11 @@ test("PB: official parcel enrichment uses valid fields, no owner PII or inferred
   clearHttpCache();
   setEnv({ PBC_PARCEL_ARCGIS_URL: "https://gis.example.gov/FeatureServer/4" });
   const e = provider.normalizeEvent(pbRecord({ PropertyAddress: "" }))!;
+  let queriedUrl = "";
   const enriched = await provider.enrichProperty(
     e,
     stub((url) => {
-      const req = new URL(url);
-      assert.equal(req.pathname, "/FeatureServer/4/query");
-      assert.equal(req.searchParams.get("returnGeometry"), "false");
-      const where = req.searchParams.get("where") || "";
-      assert.match(where, /PARID=/);
-      assert.match(where, /PARCEL_NUMBER=/);
-      assert.doesNotMatch(where, /\\bPCN=|\\bPARCELNO=/);
-      const fields = req.searchParams.get("outFields") || "";
-      assert.match(fields, /ASSESSED_VAL/);
-      assert.doesNotMatch(fields, /OWNER_NAME|\\*/);
+      queriedUrl = url;
       return resp("", 200, {
         features: [{
           attributes: {
@@ -141,6 +133,16 @@ test("PB: official parcel enrichment uses valid fields, no owner PII or inferred
     }),
   );
   assert.equal(enriched.enrichment?.matched, true);
+  const req = new URL(queriedUrl);
+  assert.equal(req.pathname, "/FeatureServer/4/query");
+  assert.equal(req.searchParams.get("returnGeometry"), "false");
+  const where = req.searchParams.get("where") || "";
+  assert.match(where, /PARID=/);
+  assert.match(where, /PARCEL_NUMBER=/);
+  assert.doesNotMatch(where, /\\bPCN=|\\bPARCELNO=/);
+  const fields = req.searchParams.get("outFields") || "";
+  assert.match(fields, /ASSESSED_VAL/);
+  assert.doesNotMatch(fields, /OWNER_NAME|\\*/);
   assert.equal(enriched.property.address, "123 Ocean Ave");
   assert.equal(enriched.property.assessed_value, 275000);
   assert.equal(enriched.property.estimated_value, null);
