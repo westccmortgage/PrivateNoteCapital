@@ -37,7 +37,7 @@ The GRCRM receiver contract was verified **read-only** from the connected repo.
 
 ## What this means for Private Note Capital
 
-The **canonical scalar fields are the real contract.** The prior structured
+The **canonical scalar fields are the real contract.** Production outbound calls move the receiver credential to the `x-lead-token` request header, never the query string; see `lib/grcrm-connection.ts`. The prior structured
 payload (`contact`/`propertyInterest`/`opportunity`/`task`/`attribution`) is
 **not consumed** by this receiver — there is **no Opportunity/Task/Property-
 Interest creation** from lead-inbound. All that context is preserved because
@@ -59,7 +59,7 @@ IMPLEMENTED by the receiver.**
 | `external_event_id` | `eventIdFor()` | — | — | — | ❌ ignored (sender traceability) |
 | `source` | "Private Note Capital" | — (source from token) | — | — | ❌ ignored |
 | `contact`/`propertyInterest`/`opportunity`/`task`/`attribution` | structured | — | — | — | ❌ ignored (forward-compat) |
-| token | in `GRCRM_LEAD_WEBHOOK_URL` `?token=` | credential | **required** | 24-hex | ✅ (auth) |
+| token | `GRCRM_LEAD_WEBHOOK_TOKEN` → `x-lead-token` HTTP header (legacy URL ?token is stripped before dispatch) | credential | **required** | 24-hex | ✅ (auth) |
 | `X-PNC-Signature` (HMAC) | if `GRCRM_WEBHOOK_SECRET` set | — | — | — | ❌ ignored (receiver uses token) |
 
 ## Per-flow
