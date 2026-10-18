@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { validateFinancing, isBotSubmission } from "@/lib/validation";
-import { recordInterest } from "@/lib/lead";
+import { recordInterest, leadAccepted } from "@/lib/lead";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { getCurrentUser } from "@/lib/supabase/server";
 
@@ -51,6 +51,13 @@ export async function POST(request: Request) {
     sourceDetail: "financing form",
     attribution: (body.attribution as InterestAttribution) || {},
   });
+
+  if (!leadAccepted(outcome)) {
+    return NextResponse.json(
+      { ok: false, error: "We could not receive your request. Please call (310) 654-1577." },
+      { status: 503 },
+    );
+  }
 
   return NextResponse.json({
     ok: true,
