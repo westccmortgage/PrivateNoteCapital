@@ -14,7 +14,7 @@ import { readAttribution } from "@/lib/attribution";
 
 // Weekly Watchlist subscription. Alerts are NOT sent until explicit consent.
 export function WatchlistForm() {
-  const [state, setState] = useState("");
+  const [state, setState] = useState("FL");
   const [counties, setCounties] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
   const [consent, setConsent] = useState(false);
@@ -55,7 +55,7 @@ export function WatchlistForm() {
       });
       const json = await res.json();
       if (!res.ok) setErr(json.errors || [json.error || "Please review the form."]);
-      else setDone(json.message || "You're subscribed. We'll send your first watchlist next week.");
+      else setDone(json.message || "Your Florida auction preferences were saved.");
     } catch {
       setErr(["Network error. Please try again."]);
     } finally {
@@ -90,7 +90,6 @@ export function WatchlistForm() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="State">
           <select className={inputCls} value={state} onChange={(e) => { setState(e.target.value); setCounties([]); }}>
-            <option value="">All states</option>
             {SUPPORTED_STATES.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
           </select>
         </Field>
