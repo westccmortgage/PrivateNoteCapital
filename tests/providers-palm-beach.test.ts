@@ -107,26 +107,54 @@ test("PB: same PCN dedupes to one property", () => {
   assert.equal(a.property.external_id, b.property.external_id);
 });
 
-// 8. Parcel PCN enrichment merges official parcel fields.
-test("PB: parcel enrichment merges lat/long + assessed", async () => {
+// 8. The actual official Palm Beach layer uses PARID / PARCEL_NUMBER,
+//    SITE_ADDR_STR / MUNICIPALITY / ZIP1 and ASSESSED_VAL (not PCN/PARCELNO).
+test("PB: official parcel enrichment uses valid fields, no owner PII or inferred market value", async () => {
   clearHttpCache();
-  setEnv({ PBC_PARCEL_ARCGIS_URL: "https://gis.example.gov/FeatureServer/0" });
-  const e = provider.normalizeEvent(pbRecord())!;
+  setEnv({ PBC_PARCEL_ARCGIS_URL: "https://gis.example.gov/FeatureServer/4" });
+  const e = provider.normalizeEvent(pbRecord({ PropertyAddress: "" }))!;
   const enriched = await provider.enrichProperty(
     e,
     stub((url) => {
-      assert.match(url, /\/query\?/);
+      const req = new URL(url);
+      assert.equal(req.pathname, "/FeatureServer/4/query");
+      assert.equal(req.searchParams.get("returnGeometry"), "false");
+      const where = req.searchParams.get("where") || "";
+      assert.match(where, /PARID=/);
+      assert.match(where, /PARCEL_NUMBER=/);
+      assert.doesNotMatch(where, /\\bPCN=|\\bPARCELNO=/);
+      const fields = req.searchParams.get("outFields") || "";
+      assert.match(fields, /ASSESSED_VAL/);
+      assert.doesNotMatch(fields, /OWNER_NAME|\\*/);
       return resp("", 200, {
-        features: [{ attributes: { ASSD_VAL: 275000, ACRES: 0.25, YEARBUILT: 1998 }, geometry: { x: -80.05, y: 26.71 } }],
+        features: [{
+          attributes: {
+            PARID: "00434412050000010",
+            SITE_ADDR_STR: "123 Ocean Ave",
+            MUNICIPALITY: "West Palm Beach",
+            ZIP1: "33401",
+            ASSESSED_VAL: 275000,
+            ACRES: 0.25,
+          },
+        }],
       });
     }),
   );
   assert.equal(enriched.enrichment?.matched, true);
-  assert.equal(enriched.property.latitude, 26.71);
-  assert.equal(enriched.property.longitude, -80.05);
+  assert.equal(enriched.property.address, "123 Ocean Ave");
   assert.equal(enriched.property.assessed_value, 275000);
-  assert.equal(enriched.property.year_built, 1998);
+  assert.equal(enriched.property.estimated_value, null);
+  assert.equal(enriched.property.estimated_equity, null);
   setEnv({ PBC_PARCEL_ARCGIS_URL: undefined });
+});
+
+test("PB: judgment plus tax assessed value never becomes unsupported market equity", () => {
+  const e = provider.normalizeEvent(pbRecord({ AssessedValue: "450000", FinalJudgmentAmount: "300000" }))!;
+  assert.equal(e.property.assessed_value, 450000);
+  assert.equal(e.property.judgment_amount, 300000);
+  assert.equal(e.property.estimated_value, null);
+  assert.equal(e.property.estimated_debt, null);
+  assert.equal(e.property.estimated_equity, null);
 });
 
 // 9. Missing parcel match → unmatched, no fabricated coordinates.
