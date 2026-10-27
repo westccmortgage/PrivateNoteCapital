@@ -1,0 +1,32 @@
+# Private Note Capital
+
+> A data and education platform for private-debt and foreclosure-auction real estate opportunities in California and Florida. It brings together property data, investor education, and private-debt deal information in one place. Informational only.
+
+Private Note Capital is an information and research platform operated by Anatoliy Kanevsky, based in the Los Angeles area. It covers private-debt (trust-deed and note) opportunities, foreclosure-auction data and due-diligence guidance, and investor education across California and Florida. It is a resource for learning and research, not a securities offering.
+
+- Coverage: California and Florida
+- Contact: 310-686-5053 · Los Angeles area
+- This is not an offer or solicitation of securities, and not investment, legal, or tax advice. Content is informational only; see the terms and privacy pages.
+
+## Private debt
+- [Private debt overview](https://privatenotecapital.com/private-debt): What private-debt and trust-deed investing involves.
+- [For investors](https://privatenotecapital.com/private-debt/investors): Investor education and how the platform works.
+- [Private debt FAQ](https://privatenotecapital.com/private-debt/faq): Common questions, answered neutrally.
+- [Review](https://privatenotecapital.com/private-debt/review): How opportunities are reviewed.
+
+## Markets and data
+- [California](https://privatenotecapital.com/california): California opportunities and data.
+- [California investor opportunities](https://privatenotecapital.com/california/investor-opportunities): Listed California opportunities.
+- [Florida](https://privatenotecapital.com/florida): Florida opportunities and data.
+- [Florida foreclosure auctions](https://privatenotecapital.com/florida/foreclosure-auctions): Foreclosure-auction data for Florida.
+- [Property search](https://privatenotecapital.com/search): Search available property data.
+
+## Guides and resources
+- [Foreclosure-auction due diligence](https://privatenotecapital.com/guides/foreclosure-auction-due-diligence): How to evaluate an auction property.
+- [Official foreclosure auctions](https://privatenotecapital.com/resources/official-foreclosure-auctions): Links to official auction sources.
+- [Financing](https://privatenotecapital.com/financing): Financing context for acquisitions.
+- [About the data](https://privatenotecapital.com/about-data): Where the data comes from and its limits.
+
+## More
+- [Company](https://privatenotecapital.com/company): About the platform.
+- [Contact](https://privatenotecapital.com/contact): Get in touch.
