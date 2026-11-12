@@ -36,6 +36,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   icons: { icon: "/favicon.svg" },
+  verification: { other: { "msvalidate.01": "040AC4CD5424E6882D57BD37C15AE402" } },
 };
 
 export const viewport: Viewport = {
