@@ -73,7 +73,7 @@ export const UNDERWRITING_GUIDELINES: Guideline[] = [
   },
   {
     title: "First-position priority",
-    body: "We emphasize 1st-position deeds of trust — the senior, first-to-be-repaid claim against the property. Subordinate positions are considered only selectively and underwritten to combined leverage.",
+    body: "We emphasize 1st-position deeds of trust, the senior, first-to-be-repaid claim against the property. Subordinate positions are considered only selectively and underwritten to combined leverage.",
   },
   {
     title: "Real collateral, in California",
@@ -81,7 +81,7 @@ export const UNDERWRITING_GUIDELINES: Guideline[] = [
   },
   {
     title: "Documented exit",
-    body: "Short-term private notes are underwritten to a clear, realistic repayment exit — sale, refinance, or term payoff — not just to the rate.",
+    body: "Short-term private notes are underwritten to a clear, realistic repayment exit, whether a sale, a refinance or a term payoff, and not just to the rate.",
   },
   {
     title: "Business-purpose focus",
@@ -121,7 +121,7 @@ export const SUITABILITY_NOTE =
 
 export const ILLUSTRATOR_DISCLAIMER =
   "Illustration only. This is a neutral arithmetic example of interest-only income at the inputs " +
-  "you choose — not a quote, an offer, a projection, or a promise of any return. Actual terms, " +
+  "you choose. It is not a quote, an offer, a projection, or a promise of any return. Actual terms, " +
   "availability, and outcomes vary and are never guaranteed.";
 
 // Words/phrases the site must never use about returns (scrubbed defensively).

@@ -5,6 +5,7 @@ import { SITE } from "@/lib/site";
 // enumerated here (they depend on live, permission-gated data).
 const ROUTES = [
   "",
+  "/hard-money-loans",
   "/search",
   "/florida/foreclosure-auctions",
   "/california/investor-opportunities",

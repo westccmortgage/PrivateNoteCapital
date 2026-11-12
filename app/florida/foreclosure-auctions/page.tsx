@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Explore official Florida foreclosure auction resources for Palm Beach, Broward, Miami-Dade, Hillsborough, Orange and Duval counties, plus acquisition financing reviews.",
   alternates: { canonical: "/florida/foreclosure-auctions" },
   openGraph: {
-    title: "Florida Foreclosure Auctions — County Clerk Sources",
+    title: "Florida Foreclosure Auctions: County Clerk Sources",
     description:
       "Official county foreclosure auction links and practical due diligence guidance. Separate from the Private Note Capital property database.",
     url: "/florida/foreclosure-auctions",
@@ -53,7 +53,7 @@ export default function FloridaForeclosureAuctionsPage() {
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           {FLORIDA_AUCTION_SOURCES.map((source) => (
             <Card key={source.county} className="p-5">
-              <p className="font-mono text-xs uppercase tracking-wide text-navy-muted">
+              <p className="text-xs text-navy-muted font-semibold">
                 {source.region}
               </p>
               <h2 className="mt-2 font-serif text-xl font-semibold text-navy">

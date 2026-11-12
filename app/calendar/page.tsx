@@ -41,7 +41,7 @@ export default async function CalendarPage() {
     <Shell className="py-8">
       <h1 className="font-serif text-2xl font-semibold text-navy sm:text-3xl">Auction Calendar</h1>
       <p className="mt-1 text-sm text-navy-muted">
-        Florida auctions by date. Dates can be postponed or cancelled — always verify with the official source.
+        Florida auctions by date. Dates can be postponed or cancelled, so check the official source before you go.
       </p>
 
       <div className="mt-6 flex flex-col gap-6">

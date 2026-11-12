@@ -15,8 +15,8 @@ export default function PrivacyPage() {
         <p className="mt-2 text-sm text-navy-muted">Operated by {COMPANY.legalName} (NMLS {COMPANY.nmls}).</p>
 
         <Sec title="Information we collect">
-          We collect information you provide directly — your name, email, phone, investor experience,
-          financing preferences, and any notes — when you register, save a property, subscribe to the
+          We collect information you provide directly: your name, email, phone, investor experience,
+          financing preferences, and any notes. We collect it when you register, save a property, subscribe to the
           weekly watchlist, or request a deal review or financing. We also record which properties you
           save and the search preferences you set.
         </Sec>

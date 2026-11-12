@@ -6,7 +6,7 @@ import { FINANCING_TYPES, labelFor } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "Financing",
   description:
-    "Request an initial financing review — auction acquisition, bridge, fix-and-flip, rehabilitation, DSCR takeout, or private capital.",
+    "Request terms on a hard money loan: fix and flip, construction, bridge, DSCR rental, auction or REO purchases.",
 };
 
 export default async function FinancingPage({
@@ -24,13 +24,13 @@ export default async function FinancingPage({
       : "Request financing";
 
   return (
-    <Shell className="py-10">
+    <Shell className="py-12 sm:py-16">
       <div className="mx-auto max-w-2xl">
         <Kicker>Arrange the capital</Kicker>
-        <h1 className="font-serif text-3xl font-semibold text-navy">{heading}</h1>
-        <p className="mt-2 text-navy-muted">
-          A short initial review — no full mortgage application at this stage. We collect only
-          what&apos;s needed to evaluate the opportunity and reach back out.
+        <h1 className="font-serif text-[38px] font-black leading-[1.02] tracking-display text-navy sm:text-[48px]">{heading}</h1>
+        <p className="mt-3 text-[17px] text-navy-soft">
+          This is not a loan application. Tell us about the property and we will call you with the loan that fits
+          and roughly how much it covers.
         </p>
 
         {!type ? (
@@ -39,7 +39,7 @@ export default async function FinancingPage({
               <a
                 key={f.value}
                 href={`/financing?type=${f.value}`}
-                className="rounded-full border border-hairlineStrong bg-surface px-3.5 py-1.5 text-sm text-navy-soft hover:border-navy-muted"
+                className="rounded-md border-2 border-hairlineStrong bg-surface px-4 py-2 text-[15px] font-semibold text-navy hover:border-navy"
               >
                 {f.label}
               </a>

@@ -23,8 +23,8 @@ export default function TermsPage() {
           Property records come from third-party and public sources and may be incomplete, out of date,
           or inaccurate. Auction dates and opening bids change and sales are frequently postponed or
           cancelled. We provide the information &ldquo;as is&rdquo; without warranty. You are responsible
-          for independently verifying every material fact — title, liens, occupancy, taxes, HOA
-          obligations, court records, and auction requirements — before acting.
+          for independently verifying every material fact, including title, liens, occupancy, taxes, HOA
+          obligations, court records, and auction requirements, before acting.
         </Sec>
         <Sec title="Not the auction operator">
           {COMPANY.shortName} is not a trustee, county clerk, or auction operator. We do not conduct

@@ -7,9 +7,9 @@ export const SITE = {
   shortName: "PrivateNoteCapital",
   domain: "privatenotecapital.com",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://privatenotecapital.com",
-  tagline: "Real Estate Investment Intelligence",
+  tagline: "Hard Money Loans for Real Estate Investors",
   description:
-    "Explore Florida foreclosure auctions, California sale listings and real-estate-secured private-capital reviews.",
+    "Hard money loans for fix and flip, ground-up construction, bridge and DSCR rentals, with Florida foreclosure auction research and California investor listings.",
 } as const;
 
 // States supported by the public FORECLOSURE search. California uses a separate route.

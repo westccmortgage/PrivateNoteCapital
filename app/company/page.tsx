@@ -6,7 +6,7 @@ import { NOT_AN_OFFER } from "@/lib/trust-deed";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Private Note Capital is operated by West Coast Capital Mortgage Inc. — Florida auction research, California property listings and private capital resources.",
+  description: "Private Note Capital is operated by West Coast Capital Mortgage. Hard money loans, Florida auction research, California property listings and private capital.",
 };
 
 export default function CompanyPage() {
@@ -52,7 +52,7 @@ export default function CompanyPage() {
         <Card className="mt-6 p-6">
           <p className="font-serif text-lg font-semibold text-navy">Company &amp; licensing</p>
           <dl className="mt-3 flex flex-col gap-3 text-[15px]">
-            <Row label="Entity" value={`${COMPANY.legalName} · NMLS ${COMPANY.nmls}`} />
+            <Row label="Entity" value={`${COMPANY.legalName}, NMLS ${COMPANY.nmls}`} />
             <Row label="Office" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneOffice)}>{COMPANY.phoneOffice}</a>} />
             <Row label="Direct" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneDirect)}>{COMPANY.phoneDirect}</a>} />
             <Row label="Email" value={<a className="text-accent hover:underline" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>} />
@@ -69,7 +69,7 @@ export default function CompanyPage() {
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="grid grid-cols-[90px_1fr] gap-3">
-      <dt className="font-mono text-[11px] uppercase tracking-wide text-navy-muted">{label}</dt>
+      <dt className="text-[11px] text-navy-muted font-semibold">{label}</dt>
       <dd className="text-navy">{value}</dd>
     </div>
   );

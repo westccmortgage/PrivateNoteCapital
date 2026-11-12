@@ -93,7 +93,7 @@ export function labelFor(
   list: ReadonlyArray<{ value: string; label: string }>,
   value: string | null | undefined,
 ): string {
-  if (!value) return "—";
+  if (!value) return "N/A";
   return list.find((o) => o.value === value)?.label ?? value;
 }
 
@@ -119,6 +119,6 @@ const SOURCE_LABELS: Record<string, string> = {
 
 /** Human-friendly source label for a stored source_name (falls back gracefully). */
 export function sourceLabel(name: string | null | undefined): string {
-  if (!name) return "—";
+  if (!name) return "N/A";
   return SOURCE_LABELS[name] ?? name.replace(/_/g, " ");
 }

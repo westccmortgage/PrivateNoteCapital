@@ -35,7 +35,7 @@ export default async function SearchPage({
         <p className="mt-1 text-sm text-navy-muted">
           {result.configured
             ? `${result.total.toLocaleString("en-US")} ${result.total === 1 ? "record" : "records"} matching your filters`
-            : "Live data is being connected. Set your filters — matching records will appear here."}
+            : "Live data is being connected. Set your filters and matching records will show up here."}
         </p>
       </div>
 

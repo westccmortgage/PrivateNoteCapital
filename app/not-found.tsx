@@ -4,7 +4,7 @@ import { Shell } from "@/components/ui";
 export default function NotFound() {
   return (
     <Shell className="py-24 text-center">
-      <p className="font-mono text-sm uppercase tracking-widest text-accent">404</p>
+      <p className="text-sm text-accent font-semibold">404</p>
       <h1 className="mt-2 font-serif text-3xl font-semibold text-navy">Page not found</h1>
       <p className="mt-2 text-navy-muted">The page you&apos;re looking for isn&apos;t here.</p>
       <div className="mt-6 flex justify-center gap-3">

@@ -1,7 +1,7 @@
 // Small shared formatting / parsing helpers for the public pages and tools.
 
 export function formatMoney(n: number | null): string {
-  if (n == null || !Number.isFinite(n)) return "—";
+  if (n == null || !Number.isFinite(n)) return "N/A";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -10,12 +10,12 @@ export function formatMoney(n: number | null): string {
 }
 
 export function formatPercent(n: number | null, digits = 1): string {
-  if (n == null || !Number.isFinite(n)) return "—";
+  if (n == null || !Number.isFinite(n)) return "N/A";
   return `${Number(n.toFixed(digits))}%`;
 }
 
 export function formatNumber(n: number | null, digits = 2): string {
-  if (n == null || !Number.isFinite(n)) return "—";
+  if (n == null || !Number.isFinite(n)) return "N/A";
   return Number(n.toFixed(digits)).toLocaleString("en-US");
 }
 

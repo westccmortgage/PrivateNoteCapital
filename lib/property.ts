@@ -73,16 +73,16 @@ export function displayEquity(p: ForeclosureProperty): number | null {
 }
 
 export function formatDate(d: string | null): string {
-  if (!d) return "—";
+  if (!d) return "N/A";
   const dt = new Date(d);
-  if (Number.isNaN(dt.getTime())) return "—";
+  if (Number.isNaN(dt.getTime())) return "N/A";
   return dt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
 export function formatDateTime(d: string | null): string {
-  if (!d) return "—";
+  if (!d) return "N/A";
   const dt = new Date(d);
-  if (Number.isNaN(dt.getTime())) return "—";
+  if (Number.isNaN(dt.getTime())) return "N/A";
   return dt.toLocaleString("en-US", {
     year: "numeric",
     month: "short",
@@ -98,7 +98,7 @@ export function bedBath(p: ForeclosureProperty): string {
   if (p.baths != null) parts.push(`${p.baths} ba`);
   if (p.units != null) parts.push(`${p.units} units`);
   if (p.square_feet != null) parts.push(`${p.square_feet.toLocaleString("en-US")} sqft`);
-  return parts.join(" · ") || "—";
+  return parts.join(", ") || "N/A";
 }
 
 export { formatMoney };

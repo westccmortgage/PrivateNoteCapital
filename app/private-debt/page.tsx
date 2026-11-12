@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShieldCheck, FileText, Landmark } from "lucide-react";
 import { Shell, Section, H2, Kicker, Button, Card } from "@/components/ui";
 import { YieldIllustrator } from "@/components/private-debt/YieldIllustrator";
 import { UNDERWRITING_GUIDELINES, NOT_AN_OFFER, RISK_DISCLOSURE } from "@/lib/trust-deed";
@@ -22,7 +21,7 @@ export default function PrivateDebtPage() {
           </h1>
           <p className="mt-4 text-lg text-navy-muted">
             Alongside our foreclosure marketplace, Private Note Capital connects capital partners
-            with real-estate-secured private mortgage notes — first-position, low-LTV, documented.
+            with real-estate-secured private mortgage notes in first position, at low loan-to-value and fully documented.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             <Button href="/private-debt/investors">Become a capital partner</Button>
@@ -32,19 +31,18 @@ export default function PrivateDebtPage() {
       </Section>
 
       <Section className="py-8">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <dl className="divide-y divide-hairline border-y-2 border-navy">
           {[
-            { icon: ShieldCheck, t: "Low loan-to-value", d: "Generally up to ~65% LTV on a 1st deed of trust, with an equity cushion beneath every note." },
-            { icon: Landmark, t: "First-position priority", d: "Senior, first-to-be-repaid claims against recorded California real estate." },
-            { icon: FileText, t: "Documented exit", d: "Underwritten to a realistic repayment — sale, refinance, or term payoff." },
+            { t: "Loan-to-value", d: "Generally up to about 65% on a first deed of trust, so every note sits on an equity cushion." },
+            { t: "Lien position", d: "First position: the senior claim, repaid first, against recorded California real estate." },
+            { t: "Exit", d: "Underwritten to a realistic repayment through a sale, a refinance or a term payoff." },
           ].map((c) => (
-            <Card key={c.t} className="p-5">
-              <c.icon size={20} className="text-accent" />
-              <p className="mt-2 font-serif text-lg font-semibold text-navy">{c.t}</p>
-              <p className="mt-1 text-sm text-navy-muted">{c.d}</p>
-            </Card>
+            <div key={c.t} className="grid gap-2 py-5 sm:grid-cols-[220px_1fr] sm:gap-8">
+              <dt className="font-serif text-[20px] font-extrabold tracking-display text-navy">{c.t}</dt>
+              <dd className="text-[16px] leading-relaxed text-navy-soft">{c.d}</dd>
+            </div>
           ))}
-        </div>
+        </dl>
       </Section>
 
       <Section className="py-8">

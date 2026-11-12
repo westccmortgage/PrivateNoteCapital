@@ -24,7 +24,7 @@ export default function ReviewPage() {
             messageLabel="Tell us briefly about your deal"
             messagePlaceholder="Property, scenario, position, timeline…"
             submitLabel="Request consultation"
-            successText="Thanks — we received your request and will reach out shortly."
+            successText="Thanks, we got your request and will be in touch."
           />
         </div>
       </div>

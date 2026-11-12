@@ -23,15 +23,15 @@ export function Section({
   );
 }
 
-export function Kicker({ children }: { children: ReactNode }) {
-  return (
-    <p className="mb-3 font-mono text-xs uppercase tracking-[0.14em] text-accent">{children}</p>
-  );
+// Labels above headings are retired site-wide: the heading carries its own weight.
+// The component stays so existing pages compile; it renders nothing.
+export function Kicker(_props: { children?: ReactNode }) {
+  return null;
 }
 
 export function H2({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <h2 className={`font-serif text-2xl font-semibold text-navy sm:text-3xl ${className}`}>
+    <h2 className={`font-serif text-[28px] font-extrabold leading-[1.08] tracking-display text-navy sm:text-[40px] ${className}`}>
       {children}
     </h2>
   );
@@ -42,7 +42,7 @@ type ButtonProps = {
   href?: string;
   onClick?: () => void;
   type?: "button" | "submit";
-  variant?: "primary" | "ghost" | "quiet";
+  variant?: "primary" | "ghost" | "quiet" | "signal";
   size?: "sm" | "md";
   disabled?: boolean;
   className?: string;
@@ -50,15 +50,16 @@ type ButtonProps = {
 };
 
 const BTN_BASE =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-md font-bold transition-colors disabled:opacity-50 disabled:pointer-events-none";
 const BTN_VARIANT: Record<string, string> = {
   primary: "bg-accent text-white hover:bg-accent-ink",
-  ghost: "border border-hairlineStrong bg-surface text-navy hover:border-navy-muted",
-  quiet: "text-accent hover:text-accent-ink",
+  ghost: "border-2 border-navy bg-transparent text-navy hover:bg-navy hover:text-white",
+  quiet: "text-accent underline decoration-2 hover:text-accent-ink",
+  signal: "bg-signal text-signal-ink hover:bg-signal-hover",
 };
 const BTN_SIZE: Record<string, string> = {
-  sm: "px-3.5 py-2 text-sm",
-  md: "px-5 py-2.5 text-[15px]",
+  sm: "px-4 py-2 text-sm",
+  md: "px-6 py-3.5 text-[16px]",
 };
 
 export function Button({
@@ -89,7 +90,7 @@ export function Button({
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-card border border-hairline bg-surface shadow-soft ${className}`}>
+    <div className={`rounded-card border border-hairline bg-surface ${className}`}>
       {children}
     </div>
   );
@@ -104,7 +105,7 @@ export function EmptyState({
 }) {
   return (
     <div className="rounded-card border border-dashed border-hairlineStrong bg-surface/60 px-6 py-12 text-center">
-      <p className="font-serif text-lg text-navy">{title}</p>
+      <p className="font-serif text-xl font-bold text-navy">{title}</p>
       {children ? <div className="mx-auto mt-2 max-w-md text-sm text-navy-muted">{children}</div> : null}
     </div>
   );
@@ -120,12 +121,12 @@ export function Badge({
   const tones: Record<string, string> = {
     neutral: "bg-canvas text-navy-muted border-hairlineStrong",
     accent: "bg-accent-soft text-accent-ink border-transparent",
-    positive: "bg-[#E5F0EC] text-positive border-transparent",
-    warn: "bg-[#F5EBDD] text-warn border-transparent",
+    positive: "bg-accent-soft text-positive border-transparent",
+    warn: "bg-[#FBEFD6] text-warn border-transparent",
   };
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wide ${tones[tone]}`}
+      className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-semibold ${tones[tone]}`}
     >
       {children}
     </span>
@@ -146,7 +147,7 @@ export function Field({
   return (
     <label className="block">
       <span className="mb-1.5 block text-[13px] font-semibold text-navy">
-        {label} {required ? <span className="text-accent">*</span> : null}
+        {label} {required ? <span className="text-warn">*</span> : null}
         {hint ? <span className="ml-1 font-normal text-navy-muted">{hint}</span> : null}
       </span>
       {children}
@@ -155,4 +156,4 @@ export function Field({
 }
 
 export const inputCls =
-  "w-full rounded-lg border border-hairlineStrong bg-canvas px-3 py-2.5 text-[15px] text-navy placeholder:text-navy-muted focus:border-accent focus:bg-surface";
+  "w-full rounded-md border border-hairlineStrong bg-surface px-3.5 py-3 text-[16px] text-navy placeholder:text-[#6F8077] hover:border-navy-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25";

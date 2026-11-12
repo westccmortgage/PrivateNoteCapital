@@ -49,7 +49,7 @@ export function PropertyCard({ p }: { p: ForeclosureProperty }) {
 
       <div className="mt-3 flex items-center justify-between border-t border-hairline pt-3 text-xs text-navy-muted">
         <span className="truncate">{bedBath(p)}</span>
-        <span className="ml-2 shrink-0 truncate font-mono uppercase tracking-wide" title={sourceLabel(p.source_name)}>{sourceLabel(p.source_name)}</span>
+        <span className="ml-2 shrink-0 truncate font-semibold" title={sourceLabel(p.source_name)}>{sourceLabel(p.source_name)}</span>
       </div>
     </Link>
   );
@@ -68,7 +68,7 @@ function Metric({
 }) {
   return (
     <div>
-      <p className="font-mono text-[10px] uppercase tracking-wide text-navy-muted">{label}</p>
+      <p className="text-[10px] text-navy-muted font-semibold">{label}</p>
       <p className={`${num ? "tnum" : ""} font-semibold ${tone === "positive" ? "text-positive" : "text-navy"}`}>
         {value}
       </p>

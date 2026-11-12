@@ -2,7 +2,7 @@
 // Update here and it propagates across the site (footer, company, legal, CTAs).
 
 export const COMPANY = {
-  legalName: "West Coast Capital Mortgage Inc.",
+  legalName: "West Coast Capital Mortgage",
   shortName: "West Coast Capital Mortgage",
   nmls: "2817729",
   dreCorporationLicense: "02440065",

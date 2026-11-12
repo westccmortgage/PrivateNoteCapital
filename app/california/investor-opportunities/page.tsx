@@ -101,21 +101,21 @@ export default async function CaliforniaInvestorOpportunitiesPage() {
                   `/financing?type=private_capital&state=CA&propertyAddress=${encodeURIComponent(p.address)}`;
                 return (
                   <Card className="flex h-full flex-col p-5" key={p.slug}>
-                    <p className="font-mono text-[10px] uppercase tracking-wide text-navy-muted">
-                      California · Active sale listing
+                    <p className="text-[10px] text-navy-muted font-semibold">
+                      Active sale listing, California
                     </p>
                     <h2 className="mt-2 font-serif text-lg font-semibold text-navy">
                       {p.address}
                     </h2>
                     <p className="mt-1 text-sm text-navy-muted">
-                      {[p.city, "CA", p.zip].filter(Boolean).join(" · ")}
+                      {[p.city, "CA", p.zip].filter(Boolean).join(", ")}
                     </p>
                     <p className="mt-4 text-xl font-semibold text-navy">
                       {p.price !== null ? formatMoney(p.price) : "Price on request"}
                     </p>
                     {metrics.length > 0 ? (
                       <p className="mt-1 text-sm text-navy-soft">
-                        {metrics.join(" · ")}
+                        {metrics.join(", ")}
                       </p>
                     ) : null}
                     {p.propertyType ? (

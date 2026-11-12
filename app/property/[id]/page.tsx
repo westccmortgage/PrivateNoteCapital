@@ -60,9 +60,9 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
 
   const equity = displayEquity(p);
   const rows: [string, string][] = [
-    ["Address", p.address ?? "—"],
-    ["APN / Parcel", p.apn ?? "—"],
-    ["County", p.county ?? "—"],
+    ["Address", p.address ?? "N/A"],
+    ["APN / Parcel", p.apn ?? "N/A"],
+    ["County", p.county ?? "N/A"],
     ["State", p.state],
     ["Property type", labelFor(PROPERTY_TYPES, p.property_type)],
     ["Beds / Baths / Size", bedBath(p)],
@@ -74,7 +74,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
     ["Estimated debt", formatMoney(p.estimated_debt)],
     ["Estimated equity", formatMoney(equity)],
     ["Occupancy", labelFor(OCCUPANCY, p.occupancy_status)],
-    ["Previous sale", p.previous_sale_date ? `${formatDate(p.previous_sale_date)} · ${formatMoney(p.previous_sale_price)}` : "—"],
+    ["Previous sale", p.previous_sale_date ? `${formatDate(p.previous_sale_date)}, ${formatMoney(p.previous_sale_price)}` : "N/A"],
   ];
 
   return (
@@ -92,7 +92,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
             <dl className="divide-y divide-hairline">
               {rows.map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[150px_1fr] gap-3 px-4 py-2.5 text-sm sm:grid-cols-[200px_1fr]">
-                  <dt className="font-mono text-[11px] uppercase tracking-wide text-navy-muted">{k}</dt>
+                  <dt className="text-[11px] text-navy-muted font-semibold">{k}</dt>
                   <dd className="tnum font-medium text-navy">{v}</dd>
                 </div>
               ))}
@@ -106,12 +106,12 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
               <ul className="flex flex-col gap-3">
                 {events.map((e) => (
                   <li key={e.id} className="flex items-start gap-3 text-sm">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent" />
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-md bg-accent" />
                     <div>
                       <p className="font-medium text-navy">{e.event_type.replace(/_/g, " ")}</p>
                       <p className="text-navy-muted">
                         {e.previous_value ? `${e.previous_value} → ` : ""}
-                        {e.new_value ?? ""} {e.event_date ? `· ${formatDate(e.event_date)}` : ""}
+                        {e.new_value ?? ""} {e.event_date ? `on ${formatDate(e.event_date)}` : ""}
                       </p>
                     </div>
                   </li>
@@ -124,11 +124,11 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
           <Card className="p-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wide text-navy-muted">Data source</p>
+                <p className="text-[11px] text-navy-muted font-semibold">Data source</p>
                 <p className="font-medium text-navy">{sourceLabel(p.source_name)}</p>
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wide text-navy-muted">Last updated</p>
+                <p className="text-[11px] text-navy-muted font-semibold">Last updated</p>
                 <p className="font-medium text-navy">{formatDateTime(p.source_last_updated_at ?? p.updated_at)}</p>
               </div>
             </div>

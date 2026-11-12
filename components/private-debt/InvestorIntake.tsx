@@ -56,7 +56,7 @@ export function InvestorIntake() {
   if (done) {
     return (
       <div className="rounded-card border border-hairline bg-surface p-6 text-center shadow-soft">
-        <p className="font-serif text-lg text-navy">Thank you — request received.</p>
+        <p className="font-serif text-lg text-navy">Thank you, we got your request.</p>
         <p className="mx-auto mt-2 max-w-md text-sm text-navy-muted">
           A representative from {COMPANY.legalName} will reach out with information. This is not an
           offer of securities or a commitment of any kind.

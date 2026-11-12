@@ -56,6 +56,6 @@ export async function POST(request: Request) {
   return NextResponse.json({
     ok: true,
     forwarded: outcome.crmForwarded,
-    message: "Thanks — your message was received. We'll get back to you shortly.",
+    message: "Thanks, we got your message. We'll get back to you shortly.",
   });
 }

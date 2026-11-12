@@ -1,54 +1,88 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
-import { COMPANY } from "@/lib/company";
+import { COMPANY, telHref } from "@/lib/company";
 
-// One combined platform: Private Debt is a normal internal section (also in the
-// primary nav), not a separate site.
-const FOOTER_LINKS = [
-  { href: "/florida/foreclosure-auctions", label: "Florida Auctions" },
-  { href: "/california/investor-opportunities", label: "California Listings" },
-  { href: "/search", label: "Search" },
-  { href: "/private-debt", label: "Private Debt" },
-  { href: "/company", label: "About" },
-  { href: "/about-data", label: "About Data" },
-  { href: "/resources/official-foreclosure-auctions", label: "Official Auction Sources" },
-  { href: "/watchlist", label: "Weekly Watchlist" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
-  { href: "/contact", label: "Contact" },
+const COLUMNS = [
+  {
+    title: "Loans",
+    links: [
+      { href: "/hard-money-loans", label: "Hard money loans" },
+      { href: "/hard-money-loans#fix-and-flip", label: "Fix and flip" },
+      { href: "/hard-money-loans#construction", label: "Ground-up construction" },
+      { href: "/hard-money-loans#bridge", label: "Bridge loans" },
+      { href: "/hard-money-loans#dscr", label: "DSCR rental loans" },
+      { href: "/financing", label: "Request financing" },
+    ],
+  },
+  {
+    title: "Find a property",
+    links: [
+      { href: "/florida/foreclosure-auctions", label: "Florida auctions" },
+      { href: "/search", label: "Foreclosure search" },
+      { href: "/calendar", label: "Auction calendar" },
+      { href: "/california/investor-opportunities", label: "California listings" },
+      { href: "/watchlist", label: "Weekly watchlist" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/company", label: "About" },
+      { href: "/private-debt", label: "Private debt" },
+      { href: "/about-data", label: "About our data" },
+      { href: "/resources/official-foreclosure-auctions", label: "Official auction sources" },
+      { href: "/contact", label: "Contact" },
+      { href: "/privacy", label: "Privacy" },
+      { href: "/terms", label: "Terms" },
+    ],
+  },
 ];
 
 export function SiteFooter() {
   return (
-    <footer className="mt-8 border-t border-hairline bg-canvas">
-      <div className="mx-auto max-w-shell px-5 py-10 sm:px-6">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-          <div className="max-w-sm">
-            <p className="font-serif text-base font-semibold text-navy">{SITE.name}</p>
-            <p className="mt-1 text-sm text-navy-muted">{SITE.tagline} — Florida auctions &amp; California listings.</p>
-            <p className="mt-3 text-xs text-navy-muted">
-              Operated by {COMPANY.legalName} · NMLS #{COMPANY.nmls} · CA DRE Corporation License #{COMPANY.dreCorporationLicense}
+    <footer className="bg-field-deep text-field-text">
+      <div className="mx-auto max-w-shell px-5 pb-10 pt-14 sm:px-6">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <p className="font-serif text-[22px] font-black tracking-display text-white">
+              Private Note <span className="text-signal">Capital</span>
             </p>
-            <p className="mt-1 text-xs text-navy-muted">
-              {COMPANY.mailingAddress} · {COMPANY.phoneOffice}
+            <p className="mt-3 max-w-xs text-[15px] leading-relaxed">
+              Hard money for investors who buy, fix, build and rent. Florida auction research and
+              California listings in the same place.
             </p>
+            <a href={telHref(COMPANY.phoneOffice)} className="mt-5 inline-block text-lg font-bold text-white hover:text-signal">
+              {COMPANY.phoneOffice}
+            </a>
           </div>
-
-          <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Footer">
-            {FOOTER_LINKS.map((l) => (
-              <Link key={l.href} href={l.href} className="text-sm text-navy-soft hover:text-navy">
-                {l.label}
-              </Link>
-            ))}
-          </nav>
+          {COLUMNS.map((col) => (
+            <div key={col.title}>
+              <h2 className="text-[15px] font-bold text-white">{col.title}</h2>
+              <ul className="mt-4 space-y-2.5">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="text-[15px] hover:text-white hover:underline">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-8 border-t border-hairline pt-6 text-xs text-navy-muted">
+        <div className="mt-12 border-t border-field-line pt-6 text-[13px] leading-relaxed text-field-text/80">
           <p>
-            © {new Date().getFullYear()} {SITE.name}. Property information may change; verify
-            independently. Not the auction operator. Not a commitment to lend. Private-debt content
-            is not an offer of securities.
+            {SITE.name} is operated by {COMPANY.legalName}, NMLS #{COMPANY.nmls}, CA DRE corporation license #
+            {COMPANY.dreCorporationLicense}. {COMPANY.mailingAddress}.
           </p>
+          <p className="mt-2">
+            Loans are for business purposes on non-owner-occupied investment property. Figures on this site are
+            program maximums, not an offer or a commitment to lend. Property information can change, so verify it
+            yourself. We are not the auction operator. Private debt content is not an offer of securities. Equal
+            Housing Opportunity.
+          </p>
+          <p className="mt-2">&copy; {new Date().getFullYear()} {SITE.name}</p>
         </div>
       </div>
     </footer>

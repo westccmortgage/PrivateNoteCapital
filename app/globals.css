@@ -3,10 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --canvas: #f8f6f1;
-  --navy: #0c1e3c;
-  --accent: #27568b;
-  --hairline: #e6e2d8;
+  --canvas: #f3f5f2;
+  --ink: #0d211a;
+  --green: #0f5c3f;
+  --field: #0e3527;
+  --signal: #ffc629;
+  --hairline: #dfe5e1;
 }
 
 html,
@@ -17,42 +19,66 @@ body {
 
 body {
   background-color: var(--canvas);
-  color: var(--navy);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* No horizontal overflow anywhere, ever (mobile requirement). */
+/* No horizontal overflow anywhere (mobile requirement). */
 html,
 body {
   max-width: 100%;
   overflow-x: hidden;
 }
 
-::selection {
-  background: rgba(39, 86, 139, 0.16);
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
 
-/* Tabular figures for money/number columns so values line up. */
+::selection {
+  background: var(--signal);
+  color: var(--ink);
+}
+
+/* Tabular figures for money and number columns so values line up. */
 .tnum {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 
-/* Focus ring — visible, accent-colored, consistent. */
 :where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--signal);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Slim scrollbar for filter drawers / textareas. */
+a {
+  text-underline-offset: 3px;
+}
+
+input,
+textarea {
+  caret-color: var(--green);
+}
+
 *::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--canvas);
 }
 *::-webkit-scrollbar-thumb {
-  background: #d8d3c6;
-  border-radius: 999px;
+  background: #b8c6be;
+  border-radius: 4px;
+}
+
+/* Older pages set display headings at 600; the display face reads right at 800. */
+.font-serif.font-semibold,
+.font-serif.font-medium {
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }

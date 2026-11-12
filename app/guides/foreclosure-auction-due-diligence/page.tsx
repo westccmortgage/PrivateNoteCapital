@@ -45,7 +45,7 @@ export default function AuctionDueDiligencePage() {
             Foreclosure auction due diligence checklist
           </h1>
           <p className="mt-4 text-lg text-navy-muted">
-            A useful opportunity starts with a verified record, clear cost assumptions, and a realistic path to settlement — not a headline discount.
+            A useful opportunity starts with a verified record, clear cost assumptions, and a realistic path to settlement. A big discount in a headline is not enough.
           </p>
           <p className="mt-3 text-sm text-navy-muted">
             Auction procedures and buyer risks vary by jurisdiction and sale type. This is general educational information, not legal, title, investment or lending advice.

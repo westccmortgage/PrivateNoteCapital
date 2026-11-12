@@ -13,7 +13,7 @@ export function SimpleInquiryForm({
   messageLabel = "Message",
   messagePlaceholder,
   submitLabel = "Send",
-  successText = "Thanks — your message was received. We'll get back to you shortly.",
+  successText = "Thanks, we got your message and will get back to you soon.",
 }: {
   endpoint: string;
   requestType?: string;

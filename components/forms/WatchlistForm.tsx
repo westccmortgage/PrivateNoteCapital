@@ -120,7 +120,7 @@ export function WatchlistForm() {
           <div className="flex flex-wrap gap-2">
             {countyOptions.map((c) => (
               <button key={c} type="button" onClick={() => toggle(counties, setCounties, c)}
-                className={`rounded-full border px-3 py-1 text-sm ${counties.includes(c) ? "border-accent bg-accent-soft text-accent-ink" : "border-hairlineStrong bg-surface text-navy-soft"}`}>
+                className={`rounded-md border px-3 py-1 text-sm ${counties.includes(c) ? "border-accent bg-accent-soft text-accent-ink" : "border-hairlineStrong bg-surface text-navy-soft"}`}>
                 {c}
               </button>
             ))}
@@ -133,7 +133,7 @@ export function WatchlistForm() {
         <div className="flex flex-wrap gap-2">
           {PROPERTY_TYPES.map((t) => (
             <button key={t.value} type="button" onClick={() => toggle(types, setTypes, t.value)}
-              className={`rounded-full border px-3 py-1 text-sm ${types.includes(t.value) ? "border-accent bg-accent-soft text-accent-ink" : "border-hairlineStrong bg-surface text-navy-soft"}`}>
+              className={`rounded-md border px-3 py-1 text-sm ${types.includes(t.value) ? "border-accent bg-accent-soft text-accent-ink" : "border-hairlineStrong bg-surface text-navy-soft"}`}>
               {t.label}
             </button>
           ))}
@@ -142,7 +142,7 @@ export function WatchlistForm() {
 
       <label className="flex items-start gap-2 text-sm text-navy">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1" />
-        <span>I consent to receive the weekly watchlist by email. I can unsubscribe anytime. (Required — nothing is sent without opt-in.)</span>
+        <span>I consent to receive the weekly watchlist by email. I can unsubscribe anytime. (Required. Nothing is sent without your opt-in.)</span>
       </label>
 
       {err.length ? (

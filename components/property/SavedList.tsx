@@ -56,7 +56,7 @@ export function SavedList({ items }: { items: SavedItem[] }) {
                 </Link>
                 {p ? (
                   <p className="mt-1 text-sm text-navy-muted tnum">
-                    Auction {formatDate(p.current_auction_date)} · Opening {formatMoney(p.opening_bid)} · Equity {formatMoney(displayEquity(p))}
+                    Auction {formatDate(p.current_auction_date)}, opening bid {formatMoney(p.opening_bid)}, equity {formatMoney(displayEquity(p))}
                   </p>
                 ) : (
                   <p className="mt-1 text-sm text-navy-muted">This property is no longer published.</p>

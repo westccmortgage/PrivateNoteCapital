@@ -12,19 +12,19 @@ export const metadata: Metadata = {
 type Resource = { name: string; url: string; description: string; note?: string };
 const florida: Resource[] = [
   {
-    name: "Palm Beach County Clerk — Property Sales",
+    name: "Palm Beach County Clerk: Property Sales",
     url: "https://www.mypalmbeachclerk.com/services/property-sales",
     description:
       "County Clerk guidance for foreclosure sales, access to the official auction calendar, registration, deposits, and procedures.",
   },
   {
-    name: "Broward County Clerk — Foreclosure Sales",
+    name: "Broward County Clerk: Foreclosure Sales",
     url: "https://www.browardclerk.org/divisions/circuitcivil",
     description:
       "Court information and instructions for foreclosure sales and the county-linked online bidding platform.",
   },
   {
-    name: "Miami-Dade County Clerk — Mortgage Foreclosures",
+    name: "Miami-Dade County Clerk: Mortgage Foreclosures",
     url: "https://www.miamidadeclerk.gov/clerk/mortgage-foreclosures.page",
     description:
       "Official mortgage foreclosure guidance, auction access, court records and title-search precautions.",

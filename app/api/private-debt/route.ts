@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       forwarded: outcome.crmForwarded,
-      message: "Thanks — we received your request and will reach out shortly.",
+      message: "Thanks, we got your request and will be in touch.",
     });
   }
 
@@ -98,6 +98,6 @@ export async function POST(request: Request) {
     ok: true,
     forwarded: outcome.crmForwarded,
     message:
-      "Thanks — a representative will reach out with information. This is not an offer of securities.",
+      "Thanks. Someone from our team will send you the information. This is not an offer of securities.",
   });
 }

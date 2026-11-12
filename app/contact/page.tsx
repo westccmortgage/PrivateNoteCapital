@@ -18,7 +18,7 @@ export default function ContactPage() {
         </p>
         <Card className="mt-6 p-6">
           <dl className="flex flex-col gap-4 text-[15px]">
-            <Row label="Company" value={`${COMPANY.legalName} · NMLS ${COMPANY.nmls}`} />
+            <Row label="Company" value={`${COMPANY.legalName}, NMLS ${COMPANY.nmls}`} />
             <Row label="Office" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneOffice)}>{COMPANY.phoneOffice}</a>} />
             <Row label="Direct" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneDirect)}>{COMPANY.phoneDirect}</a>} />
             <Row label="Email" value={<a className="text-accent hover:underline" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>} />
@@ -37,7 +37,7 @@ export default function ContactPage() {
             endpoint="/api/contact"
             messageLabel="How can we help?"
             submitLabel="Send message"
-            successText="Thanks — your message was received. We'll get back to you shortly."
+            successText="Thanks, we got your message and will get back to you soon."
           />
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function ContactPage() {
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="grid grid-cols-[90px_1fr] gap-3">
-      <dt className="font-mono text-[11px] uppercase tracking-wide text-navy-muted">{label}</dt>
+      <dt className="text-[11px] text-navy-muted font-semibold">{label}</dt>
       <dd className="text-navy">{value}</dd>
     </div>
   );
