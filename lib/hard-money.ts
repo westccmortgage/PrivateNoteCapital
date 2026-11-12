@@ -137,6 +137,6 @@ export const HOME_FAQ: [string, string][] = [
   ],
   [
     "Where do you lend?",
-    "California and Florida are our main markets, and we lend in many other states. Choose your state on the form and we will confirm what is available there.",
+    "We lend in many states across the U.S. Choose your state on the form and we will confirm what is available there.",
   ],
 ];
