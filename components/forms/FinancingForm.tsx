@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics";
 import { useState } from "react";
 import { Button, Field, inputCls } from "@/components/ui";
 import { FINANCING_TYPES, PROPERTY_TYPES, INVESTOR_EXPERIENCE } from "@/lib/constants";
@@ -42,6 +43,7 @@ export function FinancingForm({ initial = {} }: { initial?: FinancingInitial }) 
       if (!res.ok) {
         setErr(json.errors || [json.error || "Please review the form."]);
       } else {
+        track("generate_lead", { form: "financing", loan_type: String(payload.financingType || "") });
         setDone(json.message || "Request received. A representative will reach out.");
       }
     } catch {

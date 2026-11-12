@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics";
 import { useState } from "react";
 import { readAttribution } from "@/lib/attribution";
 
@@ -50,7 +51,10 @@ export function QuickTermsForm({ defaultType = "", compact = false }: { defaultT
       });
       const json = await res.json();
       if (!res.ok) setErr(json.errors || [json.error || "Please check the form and try again."]);
-      else setDone("Thanks. We have your deal and will call you to go over the numbers.");
+      else {
+        track("generate_lead", { form: "quick_terms", loan_type: String(payload.financingType || "") });
+        setDone("Thanks. We have your deal and will call you to go over the numbers.");
+      }
     } catch {
       setErr(["We could not send that. Check your connection and try again."]);
     } finally {

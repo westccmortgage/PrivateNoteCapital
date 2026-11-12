@@ -4,6 +4,7 @@ import "./globals.css";
 import { SITE } from "@/lib/site";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { Analytics } from "@/components/site/Analytics";
 
 const display = Schibsted_Grotesk({
   subsets: ["latin"],
@@ -49,6 +50,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main className="min-h-[60vh]">{children}</main>
         <SiteFooter />
+        <Analytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: SITE.name,
+              url: SITE.url,
+              logo: `${SITE.url}/favicon.svg`,
+            }),
+          }}
+        />
       </body>
     </html>
   );

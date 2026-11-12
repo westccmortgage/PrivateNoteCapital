@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics";
 import { useState } from "react";
 import { Button, Field, inputCls } from "@/components/ui";
 import { readAttribution } from "@/lib/attribution";
@@ -49,7 +50,10 @@ export function SimpleInquiryForm({
       });
       const json = await res.json();
       if (!res.ok) setErr(json.errors || [json.error || "Please review the form."]);
-      else setDone(true);
+      else {
+        track("generate_lead", { form: "inquiry" });
+        setDone(true);
+      }
     } catch {
       setErr(["Network error. Please try again."]);
     } finally {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -8,6 +9,10 @@ import { getHomeSections } from "@/lib/opportunities";
 import { PROGRAMS, HOME_FAQ } from "@/lib/hard-money";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function HomePage() {
   const sections = await getHomeSections();
