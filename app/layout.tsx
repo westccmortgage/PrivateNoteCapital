@@ -1,21 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Public_Sans, Schibsted_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SITE } from "@/lib/site";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Analytics } from "@/components/site/Analytics";
 
-const display = Schibsted_Grotesk({
-  subsets: ["latin"],
-  weight: ["700", "800", "900"],
+// Self-hosted (latin, variable weight) so the build never depends on Google Fonts.
+const display = localFont({
+  src: "./fonts/schibsted-grotesk-latin.woff2",
+  weight: "700 900",
   variable: "--font-display",
   display: "swap",
 });
 
-const body = Public_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const body = localFont({
+  src: "./fonts/public-sans-latin.woff2",
+  weight: "400 700",
   variable: "--font-body",
   display: "swap",
 });
