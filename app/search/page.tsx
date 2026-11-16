@@ -7,13 +7,17 @@ import { Pagination } from "@/components/search/Pagination";
 import { EmptyState } from "@/components/ui";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { parseSearchParams, runSearch } from "@/lib/search";
+import { hasSearchListings, listingRobots } from "@/lib/listing-status";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Search Properties",
-  description: "Search Florida foreclosure and auction opportunities. California sale listings are in the separate investor directory.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Search Properties",
+    description: "Search Florida foreclosure and auction opportunities. California sale listings are in the separate investor directory.",
+    robots: listingRobots(await hasSearchListings()),
+  };
+}
 
 export default async function SearchPage({
   searchParams,

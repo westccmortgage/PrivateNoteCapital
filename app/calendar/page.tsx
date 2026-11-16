@@ -2,14 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Shell, Card, EmptyState, Badge } from "@/components/ui";
 import { getServerSupabase } from "@/lib/supabase/server";
+import { hasUpcomingAuctions, listingRobots } from "@/lib/listing-status";
 import { type ForeclosureProperty, propertyTitle, propertyLocation, formatDate, formatMoney } from "@/lib/property";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Auction Calendar",
-  description: "Upcoming Florida foreclosure auctions by date.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Auction Calendar",
+    description: "Upcoming Florida foreclosure auctions by date.",
+    robots: listingRobots(await hasUpcomingAuctions()),
+  };
+}
 
 export default async function CalendarPage() {
   const supabase = await getServerSupabase();
