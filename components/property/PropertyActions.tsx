@@ -61,7 +61,7 @@ export function PropertyActions({ propertyId, address, state, county, auctionDat
         <Button variant="ghost" onClick={() => doSaveOrTrack("save")}><Bookmark size={17} /> Save Property</Button>
         <Button variant="ghost" onClick={() => doSaveOrTrack("track")}><BellRing size={17} /> Track Auction</Button>
         <Button variant="ghost" href={`${finBase}&type=private_capital&intent=review`}><FileSearch size={17} /> Request Deal Review</Button>
-        <Button variant="ghost" href={`${finBase}&type=auction_acquisition`}><Banknote size={17} /> Acquisition Financing</Button>
+        <Button variant="ghost" href={`${finBase}&type=auction_acquisition`}><Banknote size={17} /> Refinance After Purchase</Button>
         <Button variant="ghost" href={`${finBase}&type=rehabilitation`}><Hammer size={17} /> Rehabilitation Financing</Button>
         <Button variant="ghost" href={`${finBase}&type=dscr_takeout`}><TrendingUp size={17} /> DSCR Takeout</Button>
       </div>

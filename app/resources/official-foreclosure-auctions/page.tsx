@@ -29,6 +29,21 @@ const florida: Resource[] = [
     description:
       "Official mortgage foreclosure guidance, auction access, court records and title-search precautions.",
   },
+  {
+    name: "Hillsborough County Clerk: Foreclosure Sales",
+    url: "https://www.hillsclerk.com/court-services/foreclosure-sales",
+    description: "Foreclosure sales information and links to the official Hillsborough online sale calendar.",
+  },
+  {
+    name: "Orange County Clerk: Foreclosures",
+    url: "https://www.myorangeclerk.com/Divisions/Civil/Foreclosures",
+    description: "Official foreclosure information with a link to the Clerk's online foreclosure sales.",
+  },
+  {
+    name: "Duval County Clerk: Foreclosure",
+    url: "https://www.duvalclerk.gov/departments/civil-court-services/foreclosure",
+    description: "Jacksonville-area foreclosure auction schedules, case research, deposits and settlement rules.",
+  },
 ];
 
 function ResourceCards({ items }: { items: Resource[] }) {
@@ -91,7 +106,7 @@ export default function OfficialForeclosureResources() {
               Read the due diligence checklist →
             </Link>
             <Link href="/financing" className="hover:underline">
-              Request an acquisition financing review →
+              Request a refinance review after purchase →
             </Link>
             <Link href="/about-data" className="hover:underline">
               How our property data works →

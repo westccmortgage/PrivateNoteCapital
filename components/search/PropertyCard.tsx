@@ -68,7 +68,7 @@ function Metric({
 }) {
   return (
     <div>
-      <p className="text-[10px] text-navy-muted font-semibold">{label}</p>
+      <p className="text-[12px] text-navy-muted font-semibold">{label}</p>
       <p className={`${num ? "tnum" : ""} font-semibold ${tone === "positive" ? "text-positive" : "text-navy"}`}>
         {value}
       </p>

@@ -3,6 +3,7 @@ import { Shell } from "@/components/ui";
 import { COMPANY } from "@/lib/company";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/privacy" },
   title: "Privacy Policy",
   description: "How Private Note Capital handles lead information, saved-property activity, and preferences.",
 };

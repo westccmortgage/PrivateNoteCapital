@@ -7,7 +7,7 @@ import { formatMoney } from "@/lib/format";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "California Investor Property Listings | Private Note Capital",
+  title: "California Investor Property Listings",
   description:
     "Explore California properties already publicly listed through West Coast Capital Realty, assess acquisition financing and discuss investment goals. Not a foreclosure-auction database.",
   alternates: { canonical: "/california/investor-opportunities" },
@@ -28,7 +28,7 @@ function updatedLabel(iso: string | null): string {
   if (!iso) return "Availability subject to confirmation";
   const d = new Date(iso);
   return Number.isNaN(d.getTime()) ? "Availability subject to confirmation" :
-    `CRM updated ${d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}`;
+    `Updated ${d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}`;
 }
 
 export default async function CaliforniaInvestorOpportunitiesPage() {
@@ -38,7 +38,7 @@ export default async function CaliforniaInvestorOpportunitiesPage() {
     <>
       <Section className="pt-12 sm:pt-16">
         <div className="max-w-3xl">
-          <Kicker>California · Property research &amp; acquisition financing</Kicker>
+          <Kicker>California property research and purchase financing</Kicker>
           <h1 className="font-serif text-3xl font-semibold leading-tight text-navy sm:text-4xl md:text-[44px]">
             California investor property listings
           </h1>
@@ -49,13 +49,13 @@ export default async function CaliforniaInvestorOpportunitiesPage() {
           </p>
           <p className="mt-3 text-sm text-navy-muted">
             This is <strong>not</strong> a foreclosure, trustee-sale or auction directory.
-            Properties shown here are already-public sale listings, not undisclosed
-            PropertyRadar research leads. No listing is presented as a guaranteed investment
+            Properties shown here are already-public sale listings, not private research
+            records. No listing is presented as a guaranteed investment
             or an indication that an owner will accept an offer.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button href="/financing?type=private_capital&state=CA">
-              Review acquisition financing
+            <Button href="/financing?state=CA">
+              Get purchase financing
             </Button>
             <Button href="/private-debt/investors" variant="ghost">
               Capital partner information
@@ -67,11 +67,11 @@ export default async function CaliforniaInvestorOpportunitiesPage() {
       <Section className="py-8">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <Kicker>Public CRM listing feed</Kicker>
+            <Kicker>Public listing feed</Kicker>
             <H2>California properties currently marked for sale</H2>
             <p className="mt-2 text-sm text-navy-muted">
-              Only active California sale listings previously published by their CRM
-              listing owners are displayed. Source: West Coast Capital Realty.
+              Only active California sale listings that their listing agents chose to
+              publish are displayed. Source: West Coast Capital Realty.
             </p>
           </div>
           <a
@@ -101,7 +101,7 @@ export default async function CaliforniaInvestorOpportunitiesPage() {
                   `/financing?type=private_capital&state=CA&propertyAddress=${encodeURIComponent(p.address)}`;
                 return (
                   <Card className="flex h-full flex-col p-5" key={p.slug}>
-                    <p className="text-[10px] text-navy-muted font-semibold">
+                    <p className="text-[12px] text-navy-muted font-semibold">
                       Active sale listing, California
                     </p>
                     <h2 className="mt-2 font-serif text-lg font-semibold text-navy">
@@ -150,7 +150,7 @@ export default async function CaliforniaInvestorOpportunitiesPage() {
                 : "There are no active public sale listings to display right now."}
             </p>
             <p className="mt-2 text-sm text-navy-muted">
-              We do not replace unavailable properties with private CRM leads, assumed
+              We do not replace unavailable properties with private research records, assumed
               foreclosure listings, fabricated listings or expired sale records.
               Check the original brokerage marketplace or discuss property criteria with us.
             </p>

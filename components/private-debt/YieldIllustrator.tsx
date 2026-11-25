@@ -52,7 +52,7 @@ function Slider({
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <span className="text-[11px] text-navy-muted font-semibold">{label}</span>
+        <span className="text-[12px] text-navy-muted font-semibold">{label}</span>
         <span className="tnum text-[15px] font-semibold text-navy">{display}</span>
       </div>
       <input
@@ -68,7 +68,7 @@ function Slider({
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-hairline bg-canvas px-3 py-3 text-center">
-      <p className="text-[10px] text-navy-muted font-semibold">{label}</p>
+      <p className="text-[12px] text-navy-muted font-semibold">{label}</p>
       <p className="tnum mt-0.5 text-[15px] font-semibold text-navy">{value}</p>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { SITE } from "@/lib/site";
 
@@ -28,6 +28,25 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const path = usePathname() || "/";
   const isActive = (href: string) => path === href || path.startsWith(href + "/");
+
+  // Phones: while the menu is open the page behind it does not scroll, Escape closes it.
+  useEffect(() => {
+    if (!open) return;
+    const root = document.documentElement;
+    const prev = root.style.overflow;
+    root.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const wide = window.matchMedia("(min-width: 1024px)");
+    const onWide = () => { if (wide.matches) setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    wide.addEventListener("change", onWide);
+    return () => {
+      root.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onWide);
+    };
+  }, [open]);
+  useEffect(() => { setOpen(false); }, [path]);
 
   return (
     <header className="sticky top-0 z-40 bg-field text-white">
@@ -73,7 +92,7 @@ export function SiteHeader() {
       </div>
 
       {open ? (
-        <nav className="border-t border-field-line bg-field lg:hidden" aria-label="Mobile">
+        <nav className="fixed inset-x-0 bottom-0 top-[68px] overflow-y-auto overscroll-contain border-t border-field-line bg-field lg:hidden" aria-label="Mobile">
           <div className="mx-auto flex max-w-shell flex-col px-5 pb-5 pt-1">
             {[...NAV, ...MOBILE_EXTRA].map((n) => (
               <Link

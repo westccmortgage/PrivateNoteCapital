@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "media-src 'self'",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com",
+  // api.privatenotecapital.com = self-hosted Supabase since 2026-11-18; cloudflareinsights = Cloudflare Web Analytics; www.google.com = GA4 fallback endpoint.
+  "connect-src 'self' https://api.privatenotecapital.com wss://api.privatenotecapital.com https://*.supabase.co wss://*.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://cloudflareinsights.com",
   "frame-src 'none'",
   "frame-ancestors 'self'",
   "base-uri 'self'",

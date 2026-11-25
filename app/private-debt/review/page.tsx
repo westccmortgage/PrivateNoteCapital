@@ -3,6 +3,7 @@ import { Shell, Kicker } from "@/components/ui";
 import { SimpleInquiryForm } from "@/components/forms/SimpleInquiryForm";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/private-debt/review" },
   title: "Request a Consultation",
   description: "Book a deal review or consultation with the Private Note Capital team.",
 };

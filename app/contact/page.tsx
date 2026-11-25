@@ -4,6 +4,7 @@ import { COMPANY, telHref } from "@/lib/company";
 import { SimpleInquiryForm } from "@/components/forms/SimpleInquiryForm";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact",
   description: "Get in touch with the Private Note Capital team.",
 };
@@ -21,7 +22,7 @@ export default function ContactPage() {
             <Row label="Company" value={`${COMPANY.legalName}, NMLS ${COMPANY.nmls}`} />
             <Row label="Office" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneOffice)}>{COMPANY.phoneOffice}</a>} />
             <Row label="Direct" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneDirect)}>{COMPANY.phoneDirect}</a>} />
-            <Row label="Email" value={<a className="text-accent hover:underline" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>} />
+            <Row label="Email" value={<a className="break-all text-accent hover:underline" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>} />
             <Row label="Mail" value={COMPANY.mailingAddress} />
           </dl>
         </Card>
@@ -48,7 +49,7 @@ export default function ContactPage() {
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="grid grid-cols-[90px_1fr] gap-3">
-      <dt className="text-[11px] text-navy-muted font-semibold">{label}</dt>
+      <dt className="text-[12px] text-navy-muted font-semibold">{label}</dt>
       <dd className="text-navy">{value}</dd>
     </div>
   );

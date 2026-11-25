@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button, Field, inputCls } from "@/components/ui";
 import {
   PROPERTY_TYPES,
@@ -20,6 +20,8 @@ export function WatchlistForm() {
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<string | null>(null);
+  const doneRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (done) doneRef.current?.scrollIntoView({ block: "center" }); }, [done]);
   const [err, setErr] = useState<string[]>([]);
 
   function toggle(list: string[], set: (v: string[]) => void, v: string) {
@@ -36,7 +38,7 @@ export function WatchlistForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          company: fd.get("company"), // honeypot
+          pnc_hp: fd.get("pnc_hp"), // honeypot
           firstName: fd.get("firstName"),
           lastName: fd.get("lastName"),
           email: fd.get("email"),
@@ -65,7 +67,7 @@ export function WatchlistForm() {
 
   if (done) {
     return (
-      <div className="rounded-card border border-hairline bg-surface p-6 text-center shadow-soft">
+      <div ref={doneRef} className="rounded-card border border-hairline bg-surface p-6 text-center shadow-soft">
         <p className="font-serif text-lg text-navy">Subscribed</p>
         <p className="mt-2 text-sm text-navy-muted">{done}</p>
       </div>
@@ -78,13 +80,13 @@ export function WatchlistForm() {
     <form onSubmit={submit} className="flex flex-col gap-5 rounded-card border border-hairline bg-surface p-5 shadow-soft">
       {/* Honeypot — hidden from users; bots that fill it are silently dropped. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label>Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
+        <label>Leave this empty<input name="pnc_hp" tabIndex={-1} autoComplete="off" /></label>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="First name" required><input name="firstName" required className={inputCls} /></Field>
-        <Field label="Last name"><input name="lastName" className={inputCls} /></Field>
-        <Field label="Email" required><input name="email" type="email" required className={inputCls} /></Field>
-        <Field label="Phone" hint="(optional)"><input name="phone" type="tel" className={inputCls} /></Field>
+        <Field label="First name" required><input name="firstName" required autoComplete="given-name" className={inputCls} /></Field>
+        <Field label="Last name"><input name="lastName" autoComplete="family-name" className={inputCls} /></Field>
+        <Field label="Email" required><input name="email" type="email" required autoComplete="email" className={inputCls} /></Field>
+        <Field label="Phone" hint="(optional)"><input name="phone" type="tel" autoComplete="tel" inputMode="tel" pattern="[^0-9]*([0-9][^0-9]*){10,15}" title="Enter a phone number with 10 to 15 digits" className={inputCls} /></Field>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -141,7 +143,7 @@ export function WatchlistForm() {
       </fieldset>
 
       <label className="flex items-start gap-2 text-sm text-navy">
-        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1" />
+        <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5 shrink-0" />
         <span>I consent to receive the weekly watchlist by email. I can unsubscribe anytime. (Required. Nothing is sent without your opt-in.)</span>
       </label>
 

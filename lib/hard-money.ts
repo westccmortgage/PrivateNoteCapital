@@ -129,7 +129,7 @@ export const HOME_FAQ: [string, string][] = [
   ],
   [
     "Can you finance a house I buy at a foreclosure auction?",
-    "Not at the sale itself. Auctions usually want the full bid in cash or certified funds the same day, and a loan cannot close that fast. Once you own the property, a bridge or rental loan can refinance it, depending on its condition and your experience. Call us before you bid and we will tell you which one fits.",
+    "Not at the sale itself. Auctions usually want the full bid in cash or certified funds at the sale or by the next business day, and a loan cannot close that fast. Once you own the property, a bridge or rental loan can refinance it, depending on its condition and your experience. Call us before you bid and we will tell you which one fits.",
   ],
   [
     "Does the loan have to be in an LLC?",

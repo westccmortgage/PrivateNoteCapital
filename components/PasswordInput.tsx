@@ -42,7 +42,7 @@ export function PasswordInput({
         required={required}
         minLength={minLength}
         placeholder={placeholder}
-        className={`w-full rounded-lg border border-hairlineStrong bg-canvas py-2.5 pl-3 pr-11 text-[15px] text-navy placeholder:text-navy-muted focus:border-accent focus:bg-surface ${className}`}
+        className={`w-full rounded-lg border border-hairlineStrong bg-canvas py-2.5 pl-3 pr-11 text-[16px] text-navy placeholder:text-navy-muted focus:border-accent focus:bg-surface ${className}`}
       />
       <button
         type="button"

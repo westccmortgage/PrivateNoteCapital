@@ -4,9 +4,10 @@ import { FinancingForm } from "@/components/forms/FinancingForm";
 import { FINANCING_TYPES, labelFor } from "@/lib/constants";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/financing" },
   title: "Financing",
   description:
-    "Request terms on a hard money loan: fix and flip, construction, bridge, DSCR rental, auction or REO purchases.",
+    "Request terms on a hard money loan: fix and flip, construction, bridge, DSCR rental, or a refinance after an auction purchase.",
 };
 
 export default async function FinancingPage({
@@ -38,7 +39,7 @@ export default async function FinancingPage({
             {FINANCING_TYPES.map((f) => (
               <a
                 key={f.value}
-                href={`/financing?type=${f.value}`}
+                href={`/financing?type=${f.value}${sp.state ? `&state=${encodeURIComponent(sp.state)}` : ""}`}
                 className="rounded-md border-2 border-hairlineStrong bg-surface px-4 py-2 text-[15px] font-semibold text-navy hover:border-navy"
               >
                 {f.label}

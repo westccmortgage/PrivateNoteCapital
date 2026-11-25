@@ -55,7 +55,22 @@ export default async function HomePage() {
               All loan terms <ArrowRight size={18} />
             </Link>
           </div>
-          <div className="mt-10 overflow-x-auto">
+          {/* Phones: one block per loan instead of a 720px table (the amount and term columns were off screen). */}
+          <dl className="mt-8 border-t-2 border-navy md:hidden">
+            {PROGRAMS.map((p) => (
+              <div key={p.id} className="border-b border-hairline py-5">
+                <dt>
+                  <Link href={`/hard-money-loans#${p.id}`} className="font-serif text-[22px] font-extrabold tracking-display text-navy">
+                    {p.name}
+                  </Link>
+                </dt>
+                <dd className="mt-2 text-[16px] text-navy-soft">{p.use}</dd>
+                <dd className="mt-3 text-[16px]"><span className="text-navy-muted">How much: </span><span className="font-bold text-navy tnum">{p.max}</span></dd>
+                <dd className="mt-1 text-[16px]"><span className="text-navy-muted">Term: </span><span className="text-navy-soft">{p.term}</span></dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-10 hidden overflow-x-auto md:block">
             <table className="w-full min-w-[720px] border-collapse text-left">
               <thead>
                 <tr className="border-b-2 border-navy text-[14px] font-bold text-navy-muted">
@@ -168,7 +183,7 @@ export default async function HomePage() {
               <h3 className="font-serif text-[26px] font-extrabold tracking-display text-signal">Florida foreclosure auctions</h3>
               <p className="mt-3 max-w-xl text-[17px] leading-relaxed text-field-text">
                 Clerk auction calendars for Palm Beach, Broward, Miami-Dade, Hillsborough, Orange and Duval, with the
-                rules for each county. Set up a weekly watchlist and we email you when matching sales are added.
+                rules for each county. Join the weekly watchlist for the counties we track.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="/florida/foreclosure-auctions" className="rounded-md bg-signal px-6 py-3.5 font-bold text-signal-ink hover:bg-signal-hover">

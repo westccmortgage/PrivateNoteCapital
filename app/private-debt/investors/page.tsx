@@ -5,6 +5,7 @@ import { PARTNER_DELIVERABLES, SUITABILITY_NOTE } from "@/lib/trust-deed";
 import { Check } from "lucide-react";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/private-debt/investors" },
   title: "Become a Capital Partner",
   description: "Request information about participating in conservatively underwritten California trust deeds.",
 };

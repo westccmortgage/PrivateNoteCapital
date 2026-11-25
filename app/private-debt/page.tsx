@@ -5,6 +5,7 @@ import { YieldIllustrator } from "@/components/private-debt/YieldIllustrator";
 import { UNDERWRITING_GUIDELINES, NOT_AN_OFFER, RISK_DISCLOSURE } from "@/lib/trust-deed";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/private-debt" },
   title: "Private Debt",
   description:
     "Private Note Capital's capital-partner program: conservatively underwritten, real-estate-secured California trust deeds. Not an offer of securities.",

@@ -54,6 +54,11 @@ export default async function CalendarPage() {
             {configured
               ? "There are no published auctions on the calendar right now."
               : "Auction data is being connected. Subscribe to the weekly watchlist to be notified."}
+            <span className="mt-4 flex flex-wrap justify-center gap-4 font-semibold">
+              <Link href="/florida/foreclosure-auctions" className="text-accent hover:underline">Official county auction sources</Link>
+              <Link href="/watchlist" className="text-accent hover:underline">Weekly watchlist</Link>
+              <Link href="/financing" className="text-accent hover:underline">Request financing</Link>
+            </span>
           </EmptyState>
         ) : (
           [...groups.entries()].map(([date, list]) => (

@@ -38,7 +38,7 @@ export const OCCUPANCY = [
 ] as const;
 
 export const FINANCING_TYPES = [
-  { value: "auction_acquisition", label: "Auction Acquisition Financing" },
+  { value: "auction_acquisition", label: "Refinance After an Auction Purchase" },
   { value: "bridge", label: "Bridge Financing" },
   { value: "fix_and_flip", label: "Fix-and-Flip Financing" },
   { value: "rehabilitation", label: "Rehabilitation Financing" },

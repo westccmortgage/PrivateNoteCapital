@@ -30,7 +30,7 @@ export function InvestorIntake() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           request_type: "investor_inquiry",
-          company: fd.get("company"), // honeypot
+          pnc_hp: fd.get("pnc_hp"), // honeypot
           firstName: fd.get("firstName"),
           lastName: fd.get("lastName"),
           email: fd.get("email"),
@@ -72,7 +72,7 @@ export function InvestorIntake() {
   return (
     <form onSubmit={submit} className="flex flex-col gap-4 rounded-card border border-hairline bg-surface p-5 shadow-soft">
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label>Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
+        <label>Leave this empty<input name="pnc_hp" tabIndex={-1} autoComplete="off" /></label>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="First name" required><input name="firstName" required className={inputCls} /></Field>
@@ -103,7 +103,7 @@ export function InvestorIntake() {
       </Field>
 
       <label className="flex items-start gap-2 text-sm text-navy">
-        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1" />
+        <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5 shrink-0" />
         <span>
           I agree to be contacted by {COMPANY.legalName} about capital-partner opportunities. {SUITABILITY_NOTE}
         </span>

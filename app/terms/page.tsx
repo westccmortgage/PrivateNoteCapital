@@ -3,8 +3,9 @@ import { Shell } from "@/components/ui";
 import { COMPANY } from "@/lib/company";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/terms" },
   title: "Terms of Use",
-  description: "The terms governing use of the Private Note Capital foreclosure & auction platform.",
+  description: "The terms governing use of Private Note Capital: hard money loan requests, Florida foreclosure research and California listings.",
 };
 
 export default function TermsPage() {
@@ -15,8 +16,8 @@ export default function TermsPage() {
         <p className="mt-2 text-sm text-navy-muted">Operated by {COMPANY.legalName} (NMLS {COMPANY.nmls}).</p>
 
         <Sec title="Information only; no advice">
-          This platform provides property, foreclosure, and auction information for real-estate
-          investors and professionals. Nothing here is legal, tax, investment, or financial advice, and
+          This site provides hard money loan information and request forms, plus property, foreclosure
+          and auction information for real-estate investors and professionals. Nothing here is legal, tax, investment, or financial advice, and
           nothing constitutes a recommendation to buy or bid on any property.
         </Sec>
         <Sec title="No warranty on data">

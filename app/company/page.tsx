@@ -5,6 +5,7 @@ import { COMPANY, telHref } from "@/lib/company";
 import { NOT_AN_OFFER } from "@/lib/trust-deed";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/company" },
   title: "About",
   description: "Private Note Capital is operated by West Coast Capital Mortgage. Hard money loans, Florida auction research, California property listings and private capital.",
 };
@@ -16,7 +17,8 @@ export default function CompanyPage() {
         <Kicker>About</Kicker>
         <h1 className="font-serif text-3xl font-semibold text-navy">One platform, operated by {COMPANY.shortName}</h1>
         <p className="mt-3 text-navy-muted">
-          Private Note Capital brings together three distinct research and financing services: Florida foreclosure auction research,
+          Private Note Capital offers hard money loans for real estate investors: fix and flip, ground-up construction,
+          bridge and DSCR rental loans. It also brings together three research and financing services: Florida foreclosure auction research,
           California publicly offered real-estate listings, and a private-debt
           capital-partner program for real-estate-secured mortgage notes. These services are
           operated by {COMPANY.legalName}.
@@ -26,15 +28,15 @@ export default function CompanyPage() {
           <Card className="p-5">
             <p className="font-serif text-lg font-semibold text-navy">Florida foreclosure &amp; auction</p>
             <p className="mt-1 text-sm text-navy-muted">
-              Search opportunities, track auctions, and request acquisition financing.
+              Search opportunities, track auctions, and request a refinance after you buy.
             </p>
             <Link href="/search" className="mt-3 inline-block text-sm font-semibold text-accent hover:underline">Search properties →</Link>
           </Card>
           <Card className="p-5">
             <p className="font-serif text-lg font-semibold text-navy">California investor listings</p>
             <p className="mt-1 text-sm text-navy-muted">
-              Browse active public CRM brokerage sale listings, separate from foreclosure
-              auctions and private PropertyRadar research records.
+              Browse active public brokerage sale listings, separate from foreclosure
+              auctions and private research records.
             </p>
             <Link href="/california/investor-opportunities" className="mt-3 inline-block text-sm font-semibold text-accent hover:underline">
               Explore California listings →
@@ -55,7 +57,7 @@ export default function CompanyPage() {
             <Row label="Entity" value={`${COMPANY.legalName}, NMLS ${COMPANY.nmls}`} />
             <Row label="Office" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneOffice)}>{COMPANY.phoneOffice}</a>} />
             <Row label="Direct" value={<a className="text-accent hover:underline" href={telHref(COMPANY.phoneDirect)}>{COMPANY.phoneDirect}</a>} />
-            <Row label="Email" value={<a className="text-accent hover:underline" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>} />
+            <Row label="Email" value={<a className="break-all text-accent hover:underline" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>} />
             <Row label="Mail" value={COMPANY.mailingAddress} />
           </dl>
         </Card>
@@ -69,7 +71,7 @@ export default function CompanyPage() {
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="grid grid-cols-[90px_1fr] gap-3">
-      <dt className="text-[11px] text-navy-muted font-semibold">{label}</dt>
+      <dt className="text-[12px] text-navy-muted font-semibold">{label}</dt>
       <dd className="text-navy">{value}</dd>
     </div>
   );

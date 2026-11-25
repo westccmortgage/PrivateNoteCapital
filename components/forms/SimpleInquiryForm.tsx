@@ -1,7 +1,7 @@
 "use client";
 
 import { track } from "@/lib/analytics";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button, Field, inputCls } from "@/components/ui";
 import { readAttribution } from "@/lib/attribution";
 
@@ -25,6 +25,8 @@ export function SimpleInquiryForm({
 }) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const doneRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (done) doneRef.current?.scrollIntoView({ block: "center" }); }, [done]);
   const [err, setErr] = useState<string[]>([]);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -38,7 +40,7 @@ export function SimpleInquiryForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...(requestType ? { request_type: requestType } : {}),
-          company: fd.get("company"), // honeypot
+          pnc_hp: fd.get("pnc_hp"), // honeypot
           firstName: fd.get("firstName"),
           lastName: fd.get("lastName"),
           email: fd.get("email"),
@@ -63,7 +65,7 @@ export function SimpleInquiryForm({
 
   if (done) {
     return (
-      <div className="rounded-card border border-hairline bg-surface p-6 text-center shadow-soft">
+      <div ref={doneRef} className="rounded-card border border-hairline bg-surface p-6 text-center shadow-soft">
         <p className="font-serif text-lg text-navy">Thank you</p>
         <p className="mx-auto mt-2 max-w-md text-sm text-navy-muted">{successText}</p>
       </div>
@@ -73,13 +75,13 @@ export function SimpleInquiryForm({
   return (
     <form onSubmit={submit} className="flex flex-col gap-4 rounded-card border border-hairline bg-surface p-5 shadow-soft">
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label>Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
+        <label>Leave this empty<input name="pnc_hp" tabIndex={-1} autoComplete="off" /></label>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="First name" required><input name="firstName" required className={inputCls} /></Field>
-        <Field label="Last name"><input name="lastName" className={inputCls} /></Field>
-        <Field label="Email" required><input name="email" type="email" required className={inputCls} /></Field>
-        <Field label="Phone" hint="(optional)"><input name="phone" type="tel" className={inputCls} /></Field>
+        <Field label="First name" required><input name="firstName" required autoComplete="given-name" className={inputCls} /></Field>
+        <Field label="Last name"><input name="lastName" autoComplete="family-name" className={inputCls} /></Field>
+        <Field label="Email" required><input name="email" type="email" required autoComplete="email" className={inputCls} /></Field>
+        <Field label="Phone" hint="(optional)"><input name="phone" type="tel" autoComplete="tel" inputMode="tel" pattern="[^0-9]*([0-9][^0-9]*){10,15}" title="Enter a phone number with 10 to 15 digits" className={inputCls} /></Field>
       </div>
       <Field label={messageLabel} hint="(optional)">
         <textarea name="message" rows={4} className={inputCls} placeholder={messagePlaceholder} />

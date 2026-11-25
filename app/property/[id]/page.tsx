@@ -92,7 +92,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
             <dl className="divide-y divide-hairline">
               {rows.map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[150px_1fr] gap-3 px-4 py-2.5 text-sm sm:grid-cols-[200px_1fr]">
-                  <dt className="text-[11px] text-navy-muted font-semibold">{k}</dt>
+                  <dt className="text-[12px] text-navy-muted font-semibold">{k}</dt>
                   <dd className="tnum font-medium text-navy">{v}</dd>
                 </div>
               ))}
@@ -124,11 +124,11 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
           <Card className="p-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <p className="text-[11px] text-navy-muted font-semibold">Data source</p>
+                <p className="text-[12px] text-navy-muted font-semibold">Data source</p>
                 <p className="font-medium text-navy">{sourceLabel(p.source_name)}</p>
               </div>
               <div>
-                <p className="text-[11px] text-navy-muted font-semibold">Last updated</p>
+                <p className="text-[12px] text-navy-muted font-semibold">Last updated</p>
                 <p className="font-medium text-navy">{formatDateTime(p.source_last_updated_at ?? p.updated_at)}</p>
               </div>
             </div>

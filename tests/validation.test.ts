@@ -9,6 +9,12 @@ test("isBotSubmission: honeypot 'company' field detects bots", () => {
   assert.equal(isBotSubmission({ company: "Acme Bots LLC" }), true);
 });
 
+test("isBotSubmission: honeypot 'pnc_hp' field detects bots", () => {
+  assert.equal(isBotSubmission({ pnc_hp: "" }), false);
+  assert.equal(isBotSubmission({ pnc_hp: "x" }), true);
+  assert.equal(isBotSubmission({ pnc_hp: "", company: "" }), false);
+});
+
 test("validateContact: requires name and valid email", () => {
   assert.equal(validateContact({ firstName: "A", email: "a@b.com" }).ok, true);
   assert.equal(validateContact({ email: "a@b.com" }).ok, false);

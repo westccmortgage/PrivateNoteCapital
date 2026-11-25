@@ -3,6 +3,7 @@ import { Shell } from "@/components/ui";
 import { NOT_AN_OFFER, RISK_DISCLOSURE } from "@/lib/trust-deed";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/private-debt/faq" },
   title: "Private Debt FAQ",
   description: "Common questions about Private Note Capital's trust-deed / private-note capital-partner program.",
 };

@@ -1,10 +1,10 @@
 "use client";
 
 import { track } from "@/lib/analytics";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Field, inputCls } from "@/components/ui";
 import { FINANCING_TYPES, PROPERTY_TYPES, INVESTOR_EXPERIENCE } from "@/lib/constants";
-import { SUPPORTED_STATES } from "@/lib/site";
+import { US_STATES } from "@/lib/us-states";
 import { readAttribution } from "@/lib/attribution";
 
 export interface FinancingInitial {
@@ -21,6 +21,9 @@ export function FinancingForm({ initial = {} }: { initial?: FinancingInitial }) 
   const [done, setDone] = useState<string | null>(null);
   const [err, setErr] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const doneRef = useRef<HTMLDivElement>(null);
+  // The form is long on phones: after sending, show the confirmation instead of leaving the visitor at the footer.
+  useEffect(() => { if (done) doneRef.current?.scrollIntoView({ block: "center" }); }, [done]);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,7 +58,7 @@ export function FinancingForm({ initial = {} }: { initial?: FinancingInitial }) 
 
   if (done) {
     return (
-      <div className="rounded-card border border-hairline bg-surface p-6 text-center shadow-soft">
+      <div ref={doneRef} className="rounded-card border border-hairline bg-surface p-6 text-center shadow-soft">
         <p className="font-serif text-lg text-navy">Thank you</p>
         <p className="mt-2 text-sm text-navy-muted">{done}</p>
         <p className="mt-2 text-xs text-navy-muted">Financing is not guaranteed and is subject to review. Not a commitment to lend.</p>
@@ -67,7 +70,7 @@ export function FinancingForm({ initial = {} }: { initial?: FinancingInitial }) 
     <form onSubmit={submit} className="flex flex-col gap-4 rounded-card border border-hairline bg-surface p-5 shadow-soft">
       {/* Honeypot — hidden from users; bots that fill it are silently dropped. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label>Company<input name="company" tabIndex={-1} autoComplete="off" /></label>
+        <label>Leave this empty<input name="pnc_hp" tabIndex={-1} autoComplete="off" /></label>
       </div>
       {initial.propertyAddress ? (
         <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent-ink">
@@ -76,10 +79,10 @@ export function FinancingForm({ initial = {} }: { initial?: FinancingInitial }) 
       ) : null}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="First name" required><input name="firstName" required className={inputCls} /></Field>
-        <Field label="Last name"><input name="lastName" className={inputCls} /></Field>
-        <Field label="Email" required><input name="email" type="email" required className={inputCls} /></Field>
-        <Field label="Phone" required><input name="phone" type="tel" required className={inputCls} /></Field>
+        <Field label="First name" required><input name="firstName" required autoComplete="given-name" className={inputCls} /></Field>
+        <Field label="Last name"><input name="lastName" autoComplete="family-name" className={inputCls} /></Field>
+        <Field label="Email" required><input name="email" type="email" required autoComplete="email" className={inputCls} /></Field>
+        <Field label="Phone" required><input name="phone" type="tel" required autoComplete="tel" inputMode="tel" pattern="[^0-9]*([0-9][^0-9]*){10,15}" title="Enter a phone number with 10 to 15 digits" className={inputCls} /></Field>
       </div>
 
       <Field label="Financing type" required>
@@ -95,9 +98,9 @@ export function FinancingForm({ initial = {} }: { initial?: FinancingInitial }) 
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="State">
-          <select name="state" defaultValue={initial.state || ""} className={inputCls}>
+          <select name="state" defaultValue={(initial.state || "").toUpperCase()} className={inputCls}>
             <option value="">Select…</option>
-            {SUPPORTED_STATES.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
+            {US_STATES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
           </select>
         </Field>
         <Field label="Property type">

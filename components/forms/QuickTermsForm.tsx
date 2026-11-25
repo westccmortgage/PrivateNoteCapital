@@ -1,7 +1,9 @@
 "use client";
 
+import { US_STATES } from "@/lib/us-states";
+
 import { track } from "@/lib/analytics";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { readAttribution } from "@/lib/attribution";
 
 // Short lead form for the home page and the hard money page. It posts to the same
@@ -11,22 +13,10 @@ const LOAN_OPTIONS = [
   { value: "rehabilitation", label: "Ground-up or major rehab" },
   { value: "bridge", label: "Bridge loan" },
   { value: "dscr_takeout", label: "Rental (DSCR)" },
-  { value: "auction_acquisition", label: "Auction or REO purchase" },
+  { value: "auction_acquisition", label: "Refinance after an auction purchase" },
   { value: "private_capital", label: "Something else" },
 ];
 
-const STATES = [
-  ["CA", "California"], ["FL", "Florida"], ["TX", "Texas"], ["AL", "Alabama"], ["AK", "Alaska"], ["AZ", "Arizona"],
-  ["AR", "Arkansas"], ["CO", "Colorado"], ["CT", "Connecticut"], ["DE", "Delaware"], ["DC", "Washington, DC"],
-  ["GA", "Georgia"], ["HI", "Hawaii"], ["ID", "Idaho"], ["IL", "Illinois"], ["IN", "Indiana"], ["IA", "Iowa"],
-  ["KS", "Kansas"], ["KY", "Kentucky"], ["LA", "Louisiana"], ["ME", "Maine"], ["MD", "Maryland"],
-  ["MA", "Massachusetts"], ["MI", "Michigan"], ["MN", "Minnesota"], ["MS", "Mississippi"], ["MO", "Missouri"],
-  ["MT", "Montana"], ["NE", "Nebraska"], ["NV", "Nevada"], ["NH", "New Hampshire"], ["NJ", "New Jersey"],
-  ["NM", "New Mexico"], ["NY", "New York"], ["NC", "North Carolina"], ["ND", "North Dakota"], ["OH", "Ohio"],
-  ["OK", "Oklahoma"], ["OR", "Oregon"], ["PA", "Pennsylvania"], ["RI", "Rhode Island"], ["SC", "South Carolina"],
-  ["SD", "South Dakota"], ["TN", "Tennessee"], ["UT", "Utah"], ["VT", "Vermont"], ["VA", "Virginia"],
-  ["WA", "Washington"], ["WV", "West Virginia"], ["WI", "Wisconsin"], ["WY", "Wyoming"],
-];
 
 const field =
   "w-full rounded-md border border-hairlineStrong bg-white px-3.5 py-3 text-[16px] text-navy placeholder:text-[#6F8077] hover:border-navy-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25";
@@ -34,6 +24,8 @@ const label = "mb-1.5 block text-[13px] font-bold text-navy";
 
 export function QuickTermsForm({ defaultType = "", compact = false }: { defaultType?: string; compact?: boolean }) {
   const [done, setDone] = useState<string | null>(null);
+  const doneRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (done) doneRef.current?.scrollIntoView({ block: "center" }); }, [done]);
   const [err, setErr] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -64,7 +56,7 @@ export function QuickTermsForm({ defaultType = "", compact = false }: { defaultT
 
   if (done) {
     return (
-      <div className="rounded-card bg-white p-7 text-navy shadow-lift" role="status">
+      <div ref={doneRef} className="rounded-card bg-white p-7 text-navy shadow-lift" role="status">
         <p className="font-serif text-2xl font-extrabold tracking-display">Request received</p>
         <p className="mt-2 text-[16px] text-navy-soft">{done}</p>
         <p className="mt-3 text-[13px] text-navy-muted">Not a commitment to lend. Terms depend on the property, credit and experience.</p>
@@ -76,7 +68,7 @@ export function QuickTermsForm({ defaultType = "", compact = false }: { defaultT
     <form onSubmit={submit} className="rounded-card bg-white p-5 text-left text-navy shadow-lift sm:p-6" noValidate={false}>
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label>
-          Company<input name="company" tabIndex={-1} autoComplete="off" />
+          Leave this empty<input name="pnc_hp" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
       <div className={`grid gap-3 ${compact ? "sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
@@ -97,7 +89,7 @@ export function QuickTermsForm({ defaultType = "", compact = false }: { defaultT
           <span className={label}>Property state</span>
           <select name="state" defaultValue="" className={field}>
             <option value="">Choose a state</option>
-            {STATES.map(([code, name]) => (
+            {US_STATES.map(([code, name]) => (
               <option key={code} value={code}>
                 {name}
               </option>
@@ -114,7 +106,7 @@ export function QuickTermsForm({ defaultType = "", compact = false }: { defaultT
         </label>
         <label className="block">
           <span className={label}>Phone</span>
-          <input name="phone" type="tel" required autoComplete="tel" className={field} />
+          <input name="phone" type="tel" required autoComplete="tel" inputMode="tel" pattern="[^0-9]*([0-9][^0-9]*){10,15}" title="Enter a phone number with 10 to 15 digits" className={field} />
         </label>
         <label className="block">
           <span className={label}>Email</span>
@@ -130,7 +122,7 @@ export function QuickTermsForm({ defaultType = "", compact = false }: { defaultT
       ) : null}
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[13px] text-navy-muted">
-          Checking terms uses a soft credit pull and does not affect your score.
+          Sending this form does not run a credit check. A soft pull comes later, before written terms, and does not affect your score.
         </p>
         <button
           type="submit"

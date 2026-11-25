@@ -6,7 +6,7 @@ import { FLORIDA_AUCTION_SOURCES, FLORIDA_SOURCES_REVIEWED_AT } from "@/lib/flor
 export const metadata: Metadata = {
   title: "Florida Foreclosure Auctions by County | Official Clerk Calendars",
   description:
-    "Explore official Florida foreclosure auction resources for Palm Beach, Broward, Miami-Dade, Hillsborough, Orange and Duval counties, plus acquisition financing reviews.",
+    "Explore official Florida foreclosure auction resources for Palm Beach, Broward, Miami-Dade, Hillsborough, Orange and Duval counties, plus refinance reviews after an auction purchase.",
   alternates: { canonical: "/florida/foreclosure-auctions" },
   openGraph: {
     title: "Florida Foreclosure Auctions: County Clerk Sources",
@@ -71,12 +71,6 @@ export default function FloridaForeclosureAuctionsPage() {
                 >
                   Open official Clerk source ↗
                 </a>
-                <Link
-                  href={`/search?state=FL&county=${encodeURIComponent(source.county)}`}
-                  className="text-accent hover:underline"
-                >
-                  Check our records →
-                </Link>
               </div>
             </Card>
           ))}
@@ -108,16 +102,16 @@ export default function FloridaForeclosureAuctionsPage() {
       </Section>
       <Section className="py-8">
         <Card className="p-6 sm:p-8">
-          <Kicker>Acquisition and bridge financing</Kicker>
-          <H2>Need to review funding before an auction?</H2>
+          <Kicker>After the auction</Kicker>
+          <H2>Bought at auction? Refinance after the purchase</H2>
           <p className="mt-3 text-sm text-navy-muted">
-            Share your target property, county, acquisition plan, equity contribution,
-            intended use and required closing date. Every request is subject to
-            eligibility and underwriting; submitting an inquiry is not a commitment
-            to lend and may not satisfy the auction payment requirements.
+            Auction sales are paid in cash or certified funds at the sale or by the next business
+            day, and we cannot fund the auction payment itself. Once the property is yours, we can review a bridge,
+            rehab or DSCR loan to refinance it. Every request is subject to eligibility and
+            underwriting; submitting an inquiry is not a commitment to lend.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Button href="/financing?type=auction_acquisition">Request acquisition review</Button>
+            <Button href="/financing?type=auction_acquisition">Request a refinance review</Button>
             <Button href="/contact" variant="ghost">Contact our team</Button>
           </div>
         </Card>

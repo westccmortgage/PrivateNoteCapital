@@ -3,12 +3,11 @@
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Honeypot: a hidden field ("company") that real users never fill. If it has any
+// Honeypot: a hidden field ("pnc_hp"; "company" on pages cached before 2026-11-25) that real users never fill. If it has any
 // value, the submission is almost certainly a bot. Callers should silently accept
 // (return ok) without processing, so bots get no signal.
 export function isBotSubmission(body: Record<string, unknown>): boolean {
-  const hp = body.company;
-  return typeof hp === "string" && hp.trim().length > 0;
+  return [body.pnc_hp, body.company].some((hp) => typeof hp === "string" && hp.trim().length > 0);
 }
 
 export function cleanStr(v: unknown, max = 2000): string {
